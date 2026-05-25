@@ -1,0 +1,22 @@
+<script>
+async function subscribePush(userId) {
+  const reg = await navigator.serviceWorker.register('/static/sw.js');
+  const sub = await reg.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: '<YOUR_VAPID_PUBLIC_KEY>'
+  });
+
+  const key = sub.toJSON().keys;
+  await fetch('/api/proxy/subscribe', {  // proxy via Flask to FastAPI
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      user_id: userId,
+      endpoint: sub.endpoint,
+      p256dh: key.p256dh,
+      auth: key.auth
+    })
+  });
+}
+</script>
+<button onclick="subscribePush(1)">Enable Notifications</button>

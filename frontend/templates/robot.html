@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GURU Robot Control</title>
+
+<style>
+
+body{
+    background:#020617;
+    color:white;
+    font-family:Segoe UI;
+    padding:40px;
+}
+
+h1{
+    color:#38bdf8;
+    margin-bottom:30px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:30px;
+}
+
+.card{
+    background:#111827;
+    padding:30px;
+    border-radius:24px;
+}
+
+.status{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.status-box{
+    background:#1e293b;
+    padding:20px;
+    border-radius:18px;
+}
+
+.controls{
+    display:grid;
+    grid-template-columns:repeat(3,100px);
+    gap:15px;
+    justify-content:center;
+    margin-top:20px;
+}
+
+button{
+    padding:18px;
+    border:none;
+    border-radius:16px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+}
+
+.emergency{
+    background:#ef4444;
+}
+
+</style>
+</head>
+<body>
+
+<h1>🤖 Robot Operating Console</h1>
+
+<div class="grid">
+
+<div class="card">
+
+    <h2>Robot Telemetry</h2>
+
+    <div class="status">
+
+        <div class="status-box">
+            🔋 Battery: 87%
+        </div>
+
+        <div class="status-box">
+            🌡 CPU: 56°C
+        </div>
+
+        <div class="status-box">
+            🎤 Mic: Active
+        </div>
+
+        <div class="status-box">
+            📷 Camera: Online
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2>Movement Controls</h2>
+
+    <div class="controls">
+
+        <div></div>
+
+        <button>⬆</button>
+
+        <div></div>
+
+        <button>⬅</button>
+
+        <button class="emergency">🛑</button>
+
+        <button>➡</button>
+
+        <div></div>
+
+        <button>⬇</button>
+
+        <div></div>
+
+    </div>
+
+</div>
+
+</div>
+
+</body>
+<script src="/static/js/notifications.js"></script>
+
+<script src="/static/js/alerts.js"></script>
+</html>

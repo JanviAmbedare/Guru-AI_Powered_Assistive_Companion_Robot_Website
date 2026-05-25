@@ -1,0 +1,138 @@
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f172a;
+    color:white;
+}
+
+.memory-container{
+    display:flex;
+    height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:320px;
+    background:#111827;
+    padding:20px;
+    overflow-y:auto;
+    border-right:1px solid #1e293b;
+}
+
+.logo h1{
+    margin:0;
+    color:#38bdf8;
+}
+
+.logo p{
+    color:#94a3b8;
+}
+
+.search-box{
+    margin-top:20px;
+    display:flex;
+    gap:10px;
+}
+
+.search-box input{
+    flex:1;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+}
+
+.search-box button{
+    padding:10px 15px;
+    border:none;
+    border-radius:10px;
+    background:#38bdf8;
+    color:white;
+    cursor:pointer;
+}
+
+.memory-list{
+    margin-top:20px;
+}
+
+.memory-item{
+    background:#1e293b;
+    padding:15px;
+    margin-bottom:10px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.memory-item:hover{
+    background:#334155;
+}
+
+/* MAIN PANEL */
+
+.main-panel{
+    flex:1;
+    padding:25px;
+    overflow-y:auto;
+}
+
+.top-bar{
+    margin-bottom:20px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.card{
+    background:#1e293b;
+    padding:20px;
+    border-radius:16px;
+}
+
+.card h3{
+    color:#94a3b8;
+}
+
+.card p{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.timeline-section{
+    margin-top:30px;
+    background:#1e293b;
+    padding:20px;
+    border-radius:16px;
+}
+
+.memory-details{
+    margin-top:30px;
+    background:#1e293b;
+    padding:20px;
+    border-radius:16px;
+}
+
+#memoryContent{
+    margin-top:15px;
+    color:#cbd5e1;
+}
+
+@media(max-width:900px){
+
+    .memory-container{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        width:100%;
+        height:auto;
+    }
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GURU Logs</title>
+
+<style>
+
+body{
+    background:#0f172a;
+    color:white;
+    font-family:Segoe UI;
+    padding:40px;
+}
+
+h1{
+    color:#38bdf8;
+    margin-bottom:25px;
+}
+
+.table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.table th,
+.table td{
+    padding:16px;
+    border-bottom:1px solid #1e293b;
+}
+
+.table th{
+    background:#111827;
+}
+
+.badge{
+    padding:6px 12px;
+    border-radius:12px;
+}
+
+.success{
+    background:#22c55e;
+}
+
+.warning{
+    background:#f59e0b;
+}
+
+.danger{
+    background:#ef4444;
+}
+
+</style>
+</head>
+<body>
+
+<h1>📊 AI Activity Logs</h1>
+
+<table class="table">
+
+<tr>
+    <th>User</th>
+    <th>Intent</th>
+    <th>Response</th>
+    <th>Status</th>
+</tr>
+
+{% for log in logs %}
+<tr>
+    <td>{{ log.user_text }}</td>
+    <td>{{ log.intent }}</td>
+    <td>{{ log.response }}</td>
+    <td>
+        <span class="badge success">
+            Active
+        </span>
+    </td>
+</tr>
+{% endfor %}
+
+</table>
+
+</body>
+</html>

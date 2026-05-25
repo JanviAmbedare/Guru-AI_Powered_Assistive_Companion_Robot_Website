@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GURU Memory Center</title>
+
+    <link rel="stylesheet" href="/static/css/memory.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="memory-container">
+
+    <!-- LEFT PANEL -->
+    <div class="sidebar">
+
+        <div class="logo">
+            <h1>GURU</h1>
+            <p>Memory Center</p>
+        </div>
+
+        <div class="search-box">
+            <input type="text"
+                   id="memorySearch"
+                   placeholder="Search memories...">
+
+            <button onclick="searchMemory()">
+                Search
+            </button>
+        </div>
+
+        <div class="memory-list" id="memoryList">
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="main-panel">
+
+        <div class="top-bar">
+            <h2>User Cognitive Memory</h2>
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Total Memories</h3>
+                <p id="memoryCount">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Latest Emotion</h3>
+                <p id="latestEmotion">---</p>
+            </div>
+
+            <div class="card">
+                <h3>AI Recall Score</h3>
+                <p>98%</p>
+            </div>
+            <div class="card">
+
+            <h3>Emotional Prediction</h3>
+
+            <p id="emotionPrediction"></p>
+
+        </div>
+        <div class="card summary-card">
+
+            <h3>AI Daily Summary</h3>
+
+            <div id="dailySummary"></div>
+
+        </div>
+        </div>
+
+        <div class="timeline-section">
+            <h3>Emotion Timeline</h3>
+
+            <canvas id="emotionChart"></canvas>
+        </div>
+
+        <div class="memory-details">
+
+            <h3>Memory Details</h3>
+
+            <div id="memoryContent">
+                Select a memory to view details
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/static/js/memory.js"></script>
+
+</body>
+</html>

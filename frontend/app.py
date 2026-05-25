@@ -1,0 +1,736 @@
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    session,
+    make_response,
+    jsonify
+)
+
+from functools import wraps
+import traceback
+import os
+import base64
+from datetime import datetime
+from backend.services.api_service import *
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
+
+# =========================
+# 🔐 CONFIG
+# =========================
+
+app.secret_key = "guru-secret-key"
+
+SESSION_TIMEOUT = 60 * 60 * 24
+
+
+# =========================
+# 🛡️ SAFE API WRAPPER
+# =========================
+
+def safe_api_call(func, *args, **kwargs):
+
+    try:
+
+        response = func(*args, **kwargs)
+
+        if isinstance(response, dict):
+
+            if response.get("status") == "error":
+                print("API ERROR:", response)
+
+        return response
+
+    except Exception as e:
+
+        print("SAFE API ERROR:", e)
+        traceback.print_exc()
+
+        return {
+            "status": "error",
+            "message": str(e)
+        }
+
+
+# =========================
+# 🔐 LOGIN REQUIRED
+# =========================
+
+def login_required(f):
+
+    @wraps(f)
+    def decorated(*args, **kwargs):
+
+        if "token" not in session:
+            return redirect("/login")
+
+        return f(*args, **kwargs)
+
+    return decorated
+
+
+# =========================
+# 🔐 ROLE REQUIRED
+# =========================
+
+def role_required(role):
+
+    def decorator(f):
+
+        @wraps(f)
+        def decorated(*args, **kwargs):
+
+            if session.get("role") != role:
+                return "Unauthorized", 403
+
+            return f(*args, **kwargs)
+
+        return decorated
+
+    return decorator
+
+
+# =========================
+# 🔐 AUTO LOGIN
+# =========================
+
+@app.before_request
+def auto_login():
+
+    if "token" not in session:
+
+        token = request.cookies.get("token")
+
+        if token:
+            session["token"] = token
+
+
+# =========================
+# ❤️ HEALTH CHECK
+# =========================
+
+@app.route("/health")
+def health():
+
+    backend = safe_api_call(
+        health_check
+    )
+
+    return jsonify({
+        "frontend": "healthy",
+        "backend": backend
+    })
+
+
+# =========================
+# 🔐 LOGIN
+# =========================
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+
+        data = {
+            "name": request.form["name"],
+            "password": request.form["password"]
+        }
+
+        response = safe_api_call(
+            login_user,
+            data
+        )
+
+        if "access_token" in response:
+
+            session["token"] = response["access_token"]
+            session["user_id"] = response["user_id"]
+            session["role"] = response["role"]
+
+            resp = make_response(
+                redirect("/")
+            )
+
+            # remember me
+            if "remember" in request.form:
+
+                resp.set_cookie(
+                    "token",
+                    response["access_token"],
+                    max_age=SESSION_TIMEOUT
+                )
+
+            return resp
+
+        return render_template(
+            "login.html",
+            error="Invalid credentials"
+        )
+
+    return render_template("login.html")
+
+
+# =========================
+# 📝 SIGNUP
+# =========================
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+
+    if request.method == "POST":
+
+        data = {
+            "name": request.form["name"],
+            "password": request.form["password"],
+            "role": request.form["role"]
+        }
+
+        result = safe_api_call(
+            signup_user,
+            data
+        )
+
+        user_id = result.get("user_id")
+
+        if not user_id:
+
+            return render_template(
+                "signup.html",
+                error=result.get(
+                    "message",
+                    "Signup failed"
+                )
+            )
+
+        # AUTO LOGIN
+        login_result = safe_api_call(
+            login_user,
+            {
+                "name": data["name"],
+                "password": data["password"]
+            }
+        )
+
+        if "access_token" not in login_result:
+
+            return "Auto login failed"
+
+        session["token"] = (
+            login_result["access_token"]
+        )
+
+        session["user_id"] = (
+            login_result["user_id"]
+        )
+
+        session["role"] = (
+            login_result["role"]
+        )
+        return redirect(
+            f"/capture-face/{user_id}"
+        )
+
+    return render_template("signup.html")
+
+
+# =========================
+# 📸 FACE PAGE
+# =========================
+
+@app.route("/capture-face/<int:user_id>")
+@login_required
+def capture_face(user_id):
+
+    return render_template(
+        "capture_face.html",
+        user_id=user_id
+    )
+
+
+# =========================
+# 📸 FACE REGISTER API
+# =========================
+
+@app.route(
+    "/register/face/<int:user_id>",
+    methods=["POST"]
+)
+@login_required
+def register_face(user_id):
+
+    try:
+
+        files = request.files.getlist("files")
+
+        save_dir = (
+            f"database/faces/{user_id}"
+        )
+
+        os.makedirs(
+            save_dir,
+            exist_ok=True
+        )
+
+        for index, file in enumerate(files):
+
+            path = os.path.join(
+                save_dir,
+                f"face_{index}.jpg"
+            )
+
+            file.save(path)
+
+        return jsonify({
+            "status": "success",
+            "message":
+            "Face registration successful"
+        })
+
+    except Exception as e:
+
+        print(
+            "FACE REGISTER ERROR:",
+            str(e)
+        )
+
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+# =========================
+# 🎤 VOICE PAGE
+# =========================
+
+@app.route("/capture-voice/<int:user_id>")
+@login_required
+def capture_voice(user_id):
+
+    return render_template(
+        "capture_voice.html",
+        user_id=user_id
+    )
+
+
+# =========================
+# 🎤 VOICE REGISTER API
+# =========================
+
+@app.route(
+    "/register/voice/<int:user_id>",
+    methods=["POST"]
+)
+@login_required
+def register_voice(user_id):
+
+    try:
+
+        files = request.files.getlist("files")
+
+        save_dir = (
+            f"database/voices/{user_id}"
+        )
+
+        os.makedirs(
+            save_dir,
+            exist_ok=True
+        )
+
+        for index, file in enumerate(files):
+
+            path = os.path.join(
+                save_dir,
+                f"voice_{index}.webm"
+            )
+
+            file.save(path)
+
+        return jsonify({
+            "status": "success",
+            "message":
+            "Voice registration successful"
+        })
+
+    except Exception as e:
+
+        print(
+            "VOICE REGISTER ERROR:",
+            str(e)
+        )
+
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
+# =========================
+# 🏠 DASHBOARD
+# =========================
+
+@app.route("/")
+@login_required
+def dashboard():
+
+    return render_template(
+        "dashboard.html",
+        role=session["role"],
+        user_id=session["user_id"]
+    )
+
+
+# =========================
+# 💬 CHAT
+# =========================
+
+@app.route("/chat", methods=["GET", "POST"])
+@login_required
+def chat():
+
+    user_id = session["user_id"]
+
+    if request.method == "POST":
+
+        message = request.form["message"]
+
+        safe_api_call(
+            send_chat,
+            {
+                "user_id": user_id,
+                "text": message
+            },
+            session["token"]
+        )
+
+    conversations = safe_api_call(
+        get_chat,
+        user_id,
+        session["token"]
+    )
+
+    return render_template(
+        "chat_modern.html",
+        conversations=conversations
+    )
+
+
+# =========================
+# 🧠 MEMORY
+# =========================
+
+@app.route("/memory/<int:user_id>", methods=["GET"])
+@login_required
+def memory(user_id):
+
+    conversations = safe_api_call(
+        get_conversation,
+        user_id,
+        session["token"]
+    )
+
+    return render_template(
+        "memory.html",
+        conversations=conversations
+    )
+
+
+# =========================
+# 🤖 ROBOT
+# =========================
+
+@app.route("/robot", methods=["GET"])
+@login_required
+@role_required("OWNER")
+def robot():
+
+    status = safe_api_call(
+        get_robot_status,
+        session["token"]
+    )
+
+    return render_template(
+        "robot.html",
+        status=status
+    )
+
+
+# =========================
+# 🚨 ALERTS PAGE
+# =========================
+
+@app.route(
+    "/alerts/<int:user_id>"
+)
+@login_required
+def alerts(user_id):
+
+    alerts_data = safe_api_call(
+        get_alerts,
+        user_id,
+        session["token"]
+    )
+
+    analytics = safe_api_call(
+        alert_analytics,
+        user_id,
+        session["token"]
+    )
+
+    return render_template(
+        "alerts.html",
+        alerts=alerts_data,
+        analytics=analytics,
+        user_id=user_id
+    )
+
+
+# =========================
+# 🚨 EMERGENCY ALERT
+# =========================
+
+@app.route(
+    "/trigger-emergency",
+    methods=["POST"]
+)
+@login_required
+def trigger_emergency():
+
+    data = request.json
+
+    result = safe_api_call(
+        send_emergency_alert,
+        session["user_id"],
+        data["message"],
+        session["token"]
+    )
+
+    return jsonify(result)
+
+
+# =========================
+# ✅ ACKNOWLEDGE ALERT
+# =========================
+
+@app.route(
+    "/ack-alert/<int:alert_id>",
+    methods=["PUT"]
+)
+@login_required
+def ack_alert(alert_id):
+
+    result = safe_api_call(
+        acknowledge_alert,
+        alert_id,
+        session["token"]
+    )
+
+    return jsonify(result)
+
+# =========================
+# 🔴 LIVE ALERTS API
+# =========================
+
+@app.route(
+    "/api/live-alerts/<int:user_id>"
+)
+@login_required
+def live_alerts(user_id):
+
+    alerts_data = safe_api_call(
+        get_alerts,
+        user_id,
+        session["token"]
+    )
+
+    active_alerts = []
+
+    for alert in alerts_data:
+
+        if alert["status"] == "ACTIVE":
+
+            active_alerts.append(alert)
+
+    return jsonify(active_alerts)
+
+# =========================
+# ⏰ REMINDERS
+# =========================
+
+@app.route(
+    "/reminders/<int:user_id>",
+    methods=["GET"]
+)
+@login_required
+def reminders(user_id):
+
+    reminders_data = safe_api_call(
+        get_reminders,
+        user_id,
+        session["token"]
+    )
+
+    return render_template(
+        "reminders.html",
+        reminders=reminders_data,
+        user_id=user_id
+    )
+
+
+# =========================
+# ➕ CREATE REMINDER
+# =========================
+
+@app.route(
+    "/create-reminder",
+    methods=["POST"]
+)
+@login_required
+def create_reminder_route():
+
+    data = request.json
+
+    result = safe_api_call(
+        create_reminder,
+        data,
+        session["token"]
+    )
+
+    return jsonify(result)
+
+
+# =========================
+# ✅ DONE
+# =========================
+
+@app.route(
+    "/complete-reminder/<int:reminder_id>",
+    methods=["PUT"]
+)
+@login_required
+def complete_reminder(
+    reminder_id
+):
+
+    result = safe_api_call(
+        mark_reminder_done,
+        session["user_id"],
+        reminder_id,
+        session["token"]
+    )
+
+    return jsonify(result)
+
+
+# =========================
+# 🗑 DELETE
+# =========================
+
+@app.route(
+    "/delete-reminder/<int:reminder_id>",
+    methods=["DELETE"]
+)
+@login_required
+def delete_reminder_route(
+    reminder_id
+):
+
+    result = safe_api_call(
+        delete_reminder,
+        session["user_id"],
+        reminder_id,
+        session["token"]
+    )
+
+    return jsonify(result)
+
+# =========================
+# 👤 PROFILE
+# =========================
+
+@app.route("/profile/<int:user_id>", methods=["GET"])
+@login_required
+def profile(user_id):
+
+    profile_data = safe_api_call(
+        get_profile,
+        user_id,
+        session["token"]
+    )
+
+    return render_template(
+        "profile.html",
+        profile=profile_data
+    )
+
+
+# =========================
+# 📊 LOGS
+# =========================
+
+@app.route("/logs/<int:user_id>", methods=["GET"])
+@login_required
+def logs(user_id):
+
+    logs_data = safe_api_call(
+        get_logs,
+        user_id,
+        session["token"]
+    )
+
+    return render_template(
+        "logs.html",
+        logs=logs_data
+    )
+
+
+# =========================
+# 🚪 LOGOUT
+# =========================
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    resp = make_response(
+        redirect("/login")
+    )
+
+    resp.delete_cookie("token")
+
+    return resp
+
+
+# =========================
+# ❌ ERROR HANDLERS
+# =========================
+
+@app.errorhandler(404)
+def not_found(e):
+
+    return render_template(
+        "404.html"
+    ), 404
+
+
+@app.errorhandler(500)
+def server_error(e):
+
+    return render_template(
+        "500.html"
+    ), 500
+
+
+# =========================
+# 🚀 RUN
+# =========================
+
+if __name__ == "__main__":
+
+    app.run(
+        debug=True,
+        host="0.0.0.0",
+        port=5000
+    )

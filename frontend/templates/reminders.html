@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>GURU Smart Reminders</title>
+
+<link rel="stylesheet"
+href="/static/css/reminders.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topbar">
+
+        <h1>
+            ⏰ Smart Reminders
+        </h1>
+
+        <button onclick="openModal()">
+            + Add Reminder
+        </button>
+
+    </div>
+
+    <div id="reminderGrid"
+         class="grid">
+
+        {% for r in reminders %}
+
+        <div class="card {{ r.priority }}">
+
+            <div class="header">
+
+                <h3>{{ r.title }}</h3>
+
+                <span>
+                    {{ r.priority }}
+                </span>
+
+            </div>
+
+            <p>{{ r.message }}</p>
+
+            <div class="time">
+                {{ r.remind_at }}
+            </div>
+
+            <div class="actions">
+
+                <button
+                onclick="completeReminder(
+                    {{ r.reminder_id }}
+                )">
+
+                    ✅ Done
+
+                </button>
+
+                <button
+                onclick="deleteReminder(
+                    {{ r.reminder_id }}
+                )">
+
+                    🗑 Delete
+
+                </button>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<!-- MODAL -->
+
+<div id="modal" class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>⏰ Create Reminder</h2>
+
+            <button
+            class="close-btn"
+            onclick="closeModal()">
+
+                ✕
+
+            </button>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Reminder Title</label>
+
+            <input
+                id="title"
+                type="text"
+                placeholder="Enter reminder title"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Reminder Message</label>
+
+            <textarea
+                id="message"
+                placeholder="Enter reminder message"
+            ></textarea>
+
+        </div>
+
+
+        <div class="form-row">
+
+            <div class="form-group">
+
+                <label>Reminder Time</label>
+
+                <input
+                    type="datetime-local"
+                    id="remindAt"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Priority</label>
+
+                <select id="priority">
+
+                    <option>LOW</option>
+                    <option>MEDIUM</option>
+                    <option>HIGH</option>
+                    <option>CRITICAL</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <button
+        class="save-btn"
+        onclick="createReminder()">
+
+            Save Reminder
+
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const USER_ID = {{ user_id }};
+
+</script>
+
+<script src="/static/js/reminders.js"></script>
+<script src="/static/js/notifications.js"></script>
+
+<script src="/static/js/alerts.js"></script>
+</body>
+</html>
