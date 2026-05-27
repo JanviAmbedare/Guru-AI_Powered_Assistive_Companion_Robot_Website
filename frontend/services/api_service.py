@@ -449,17 +449,25 @@ def send_robot_command(
 def upload_face_samples(
     user_id,
     files,
+    media_role,
     token
 ):
 
     return api_request(
+
         "POST",
+
         f"/register/face/{user_id}",
+
         token=token,
-        files=files
+
+        files=files,
+
+        data={
+            "media_role":
+                media_role
+        }
     )
-
-
 # =====================================================
 # 🎤 VOICE APIs
 # =====================================================
@@ -467,16 +475,25 @@ def upload_face_samples(
 def upload_voice_samples(
     user_id,
     files,
+    media_role,
     token
 ):
 
     return api_request(
-        "POST",
-        f"/register/voice/{user_id}",
-        token=token,
-        files=files
-    )
 
+        "POST",
+
+        f"/register/voice/{user_id}",
+
+        token=token,
+
+        files=files,
+
+        data={
+            "media_role":
+                media_role
+        }
+    )
 
 # =====================================================
 # 📊 ANALYTICS APIs

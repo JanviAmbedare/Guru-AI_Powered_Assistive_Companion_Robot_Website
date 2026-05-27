@@ -1,3 +1,7 @@
+import {
+    uploadVoiceData
+}
+from "../services/api_services.js";
 const mic =
     document.getElementById("mic");
 
@@ -146,19 +150,19 @@ async function uploadVoices(){
 
     });
 
+    // IMPORTANT
+    formData.append(
+        "media_role",
+        "raw"
+    );
+
     try{
 
-        const response = await fetch(
-
-            `/register/voice/${USER_ID}`,
-
-            {
-                method:"POST",
-                body: formData
-            }
-        );
-
-        const result = await response.json();
+        const result =
+            await uploadVoiceData(
+                USER_ID,
+                formData
+            );
 
         console.log(result);
 

@@ -1,4 +1,10 @@
 <script>
+
+    window.API_BASE_URL =
+        "{{ API_BASE_URL }}";
+
+</script>
+<script>
 async function subscribePush(userId) {
   const reg = await navigator.serviceWorker.register('/static/sw.js');
   const sub = await reg.pushManager.subscribe({

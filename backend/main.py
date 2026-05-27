@@ -117,6 +117,16 @@ app.include_router(
     analytics_socket_router
 )
 
+from routes.media_routes import media_bp
+from routes.media_routes import media_bp
+
+app.register_blueprint(
+    media_bp
+)
+app.register_blueprint(
+    media_bp,
+    url_prefix="/api/media"
+)
 # app.include_router(
 #     memory_router,
 #     prefix="/api/memory",

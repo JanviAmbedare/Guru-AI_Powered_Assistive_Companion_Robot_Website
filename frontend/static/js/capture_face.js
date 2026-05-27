@@ -1,3 +1,8 @@
+import {
+    uploadFaceData
+}
+from "../services/api_services.js";
+
 const video = document.getElementById("video");
 
 const sampleCountText =
@@ -201,19 +206,19 @@ async function uploadFaces(){
 
     });
 
+    // IMPORTANT
+    formData.append(
+        "media_role",
+        "raw"
+    );
+
     try{
 
-        const response = await fetch(
-
-            `/register/face/${USER_ID}`,
-
-            {
-                method:"POST",
-                body: formData
-            }
-        );
-
-        const result = await response.json();
+        const result =
+            await uploadFaceData(
+                USER_ID,
+                formData
+            );
 
         loader.style.display = "none";
 

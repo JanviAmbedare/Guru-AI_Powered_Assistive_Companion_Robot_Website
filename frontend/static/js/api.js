@@ -456,3 +456,52 @@ async function healthCheck() {
         "/health"
     );
 }
+
+
+// =====================================
+// FACE UPLOAD
+// =====================================
+
+async function uploadFaceData(
+    userId,
+    formData
+){
+
+    const response = await fetch(
+
+        `${BASE_URL}/register/face/${userId}`,
+
+        {
+            method: "POST",
+
+            body: formData
+        }
+    );
+
+    return await response.json();
+}
+
+
+
+// =====================================
+// VOICE UPLOAD
+// =====================================
+
+async function uploadVoiceData(
+    userId,
+    formData
+){
+
+    const response = await fetch(
+
+        `${BASE_URL}/register/voice/${userId}`,
+
+        {
+            method: "POST",
+
+            body: formData
+        }
+    );
+
+    return await response.json();
+}

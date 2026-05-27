@@ -55,9 +55,11 @@ def inject_globals():
     return {
 
         "API_BASE_URL":
-            os.getenv(
-                "BASE_URL"
-            )
+        os.getenv(
+            "API_BASE_URL",
+
+            "https://guru-ai-powered-assistive-companion-kpna.onrender.com"
+        )
     }
 
 # =========================
@@ -298,29 +300,33 @@ def register_face(user_id):
 
         files = request.files.getlist("files")
 
-        save_dir = (
-            f"database/faces/{user_id}"
+        media_role = request.form.get(
+            "media_role",
+            "raw"
         )
 
-        os.makedirs(
-            save_dir,
-            exist_ok=True
+        result = upload_face_samples(
+
+            user_id=user_id,
+
+            files=[
+                (
+                    "files",
+                    (
+                        file.filename,
+                        file.stream,
+                        file.mimetype
+                    )
+                )
+                for file in files
+            ],
+
+            media_role=media_role,
+
+            token=session["token"]
         )
 
-        for index, file in enumerate(files):
-
-            path = os.path.join(
-                save_dir,
-                f"face_{index}.jpg"
-            )
-
-            file.save(path)
-
-        return jsonify({
-            "status": "success",
-            "message":
-            "Face registration successful"
-        })
+        return jsonify(result)
 
     except Exception as e:
 
@@ -329,9 +335,14 @@ def register_face(user_id):
             str(e)
         )
 
+        traceback.print_exc()
+
         return jsonify({
+
             "status": "error",
+
             "message": str(e)
+
         }), 500
 # =========================
 # 🎤 VOICE PAGE
@@ -345,7 +356,6 @@ def capture_voice(user_id):
         "capture_voice.html",
         user_id=user_id
     )
-
 
 # =========================
 # 🎤 VOICE REGISTER API
@@ -362,29 +372,33 @@ def register_voice(user_id):
 
         files = request.files.getlist("files")
 
-        save_dir = (
-            f"database/voices/{user_id}"
+        media_role = request.form.get(
+            "media_role",
+            "raw"
         )
 
-        os.makedirs(
-            save_dir,
-            exist_ok=True
+        result = upload_voice_samples(
+
+            user_id=user_id,
+
+            files=[
+                (
+                    "files",
+                    (
+                        file.filename,
+                        file.stream,
+                        file.mimetype
+                    )
+                )
+                for file in files
+            ],
+
+            media_role=media_role,
+
+            token=session["token"]
         )
 
-        for index, file in enumerate(files):
-
-            path = os.path.join(
-                save_dir,
-                f"voice_{index}.webm"
-            )
-
-            file.save(path)
-
-        return jsonify({
-            "status": "success",
-            "message":
-            "Voice registration successful"
-        })
+        return jsonify(result)
 
     except Exception as e:
 
@@ -393,9 +407,14 @@ def register_voice(user_id):
             str(e)
         )
 
+        traceback.print_exc()
+
         return jsonify({
+
             "status": "error",
+
             "message": str(e)
+
         }), 500
 
 # =========================
