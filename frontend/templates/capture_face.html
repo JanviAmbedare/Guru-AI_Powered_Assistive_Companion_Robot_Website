@@ -312,10 +312,14 @@ button:hover{
 <script>
 
 const USER_ID = "{{ user_id }}";
-
-console.log(USER_ID);
-
+console.log("User ID:", USER_ID);
 </script>
+<!-- CONFIG -->
+<script src="{{ url_for('static', filename='js/config.js') }}"></script>
+
+<!-- API ENGINE -->
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+
 
 <script src="/static/js/capture_face.js"></script>
 

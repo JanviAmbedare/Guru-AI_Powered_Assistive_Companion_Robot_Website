@@ -143,15 +143,18 @@ href="/static/css/alerts.css">
 
 </div>
 
+
 <script>
 
 const USER_ID = {{ user_id }};
 
 
-
+</script>
+<script src="{{ url_for('static', filename='js/config.js') }}"></script>
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
 <script src="/static/js/notifications.js"></script>
 
 <script src="/static/js/alerts.js"></script>
-</script>
+
 </body>
 </html>

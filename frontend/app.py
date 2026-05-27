@@ -13,20 +13,52 @@ import traceback
 import os
 import base64
 from datetime import datetime
-from services.api_service import *
 from flask_cors import CORS
+from services.api_service import *
+
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(
+    app,
+    supports_credentials=True
+)
+# =========================
+# 📦 FILE LIMITS
+# =========================
+
+app.config[
+    "MAX_CONTENT_LENGTH"
+] = 50 * 1024 * 1024
 
 # =========================
 # 🔐 CONFIG
 # =========================
 
-app.secret_key = "guru-secret-key"
+app.secret_key = os.getenv("SECRET_KEY")
 
 SESSION_TIMEOUT = 60 * 60 * 24
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
+# =========================
+# 🌐 GLOBAL TEMPLATE VARS
+# =========================
+
+@app.context_processor
+def inject_globals():
+
+    return {
+
+        "API_BASE_URL":
+            os.getenv(
+                "BASE_URL"
+            )
+    }
 
 # =========================
 # 🛡️ SAFE API WRAPPER
@@ -728,9 +760,7 @@ def server_error(e):
 # =========================
 
 if __name__ == "__main__":
-
     app.run(
-        debug=True,
         host="0.0.0.0",
-        port=5000
+        port=int(os.environ.get("PORT", 5000))
     )
