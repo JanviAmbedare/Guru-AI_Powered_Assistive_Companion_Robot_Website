@@ -1,99 +1,86 @@
-from flask import Blueprint
-from flask import request
-from flask import jsonify
+from fastapi import APIRouter
+from fastapi import UploadFile
+from fastapi import File
+from fastapi import Form
+from fastapi import HTTPException
+
+from typing import List
 
 from services.media_manager import MediaManager
 
-media_bp = Blueprint(
-    "media",
-    __name__
-)
+
+router = APIRouter()
 
 
 # =========================
 # FACE UPLOAD
 # =========================
 
-@media_bp.route(
-    "/register/face/<int:user_id>",
-    methods=["POST"]
-)
-def upload_face(user_id):
+@router.post("/register/face/{user_id}")
+async def upload_face(
+    user_id: int,
+    files: List[UploadFile] = File(...),
+    media_role: str = Form("raw")
+):
 
     try:
 
-        files = request.files.getlist("files")
-
         uploaded_urls = (
             MediaManager.process_face_files(
-
-            user_id=user_id,
-
-            files=files,
-
-            media_role=request.form.get(
-                "media_role",
-                "raw"
+                user_id=user_id,
+                files=files,
+                media_role=media_role
             )
         )
-        )
 
-        return jsonify({
+        return {
             "status": "success",
             "uploaded": len(uploaded_urls),
             "urls": uploaded_urls
-        })
+        }
 
     except Exception as e:
 
         print(e)
 
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
-
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 
 
 # =========================
 # VOICE UPLOAD
 # =========================
 
-@media_bp.route(
-    "/register/voice/<int:user_id>",
-    methods=["POST"]
-)
-def upload_voice(user_id):
+@router.post("/register/voice/{user_id}")
+async def upload_voice(
+    user_id: int,
+    files: List[UploadFile] = File(...),
+    media_role: str = Form("raw")
+):
 
     try:
 
-        files = request.files.getlist("files")
-
         uploaded_urls = (
             MediaManager.process_voice_files(
-
-            user_id=user_id,
-
-            files=files,
-
-            media_role=request.form.get(
-                "media_role",
-                "raw"
+                user_id=user_id,
+                files=files,
+                media_role=media_role
             )
         )
-        )
 
-        return jsonify({
+        return {
             "status": "success",
             "uploaded": len(uploaded_urls),
             "urls": uploaded_urls
-        })
+        }
 
     except Exception as e:
 
         print(e)
 
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )

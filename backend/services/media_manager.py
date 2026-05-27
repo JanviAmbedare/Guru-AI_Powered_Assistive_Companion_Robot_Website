@@ -7,8 +7,8 @@ from services.cloudinary_service import (
     CloudinaryService
 )
 
-from database.mysql import (
-    get_db_connection
+from database.db_connection import (
+    get_connection as get_db_connection
 )
 
 load_dotenv()
