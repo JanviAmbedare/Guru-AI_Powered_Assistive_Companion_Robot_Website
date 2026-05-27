@@ -21,7 +21,7 @@ class CloudinaryService:
         )
 
         return result
-    
+
     @staticmethod
     def delete_file(public_id):
 
