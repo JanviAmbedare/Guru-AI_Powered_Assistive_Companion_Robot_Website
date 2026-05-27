@@ -2,25 +2,12 @@ import time
 import schedule
 import threading
 
-from backend.database.db_utils import (
-    execute_query
-)
 
-from backend.services.alert_service import (
-    AlertService
-)
-
-from backend.services.robot_service import (
-    RobotService
-)
-
-from backend.services.notification_service import (
-    NotificationService
-)
-
-from backend.services.logging_service import (
-    LoggingService
-)
+from database.db_utils import (    execute_query)
+from services.alert_service import (    AlertService)
+from services.robot_service import (    RobotService)
+from services.notification_service import (    NotificationService)
+from services.logging_service import (    LoggingService)
 
 
 class ReminderScheduler:

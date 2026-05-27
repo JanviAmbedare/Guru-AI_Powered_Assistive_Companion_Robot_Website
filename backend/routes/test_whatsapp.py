@@ -1,7 +1,7 @@
-from backend.services.whatsapp_service import (
+from services.whatsapp_service import (
     WhatsAppService
 )
-from backend.config.settings import settings
+from config.settings import settings
 
 result = WhatsAppService.send_message(
 

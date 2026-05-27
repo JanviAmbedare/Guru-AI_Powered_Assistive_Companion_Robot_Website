@@ -1,5 +1,4 @@
-from pywebpush import webpush
-from backend.config.settings import settings
+from config.settings import settings
 
 #Currently we are only logging push notifications, but this service can be expanded in the future to handle actual push logic if needed
 #when we implement push notifications on the frontend, we can use this service to send push notifications from the backend as well

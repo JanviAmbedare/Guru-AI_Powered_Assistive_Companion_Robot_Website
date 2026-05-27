@@ -6,12 +6,12 @@ from fastapi import (
 )
 
 import os
-from backend.models.schemas import UserCreate
-from backend.database.user_manager import UserManager
-from backend.database.biometric_manager import BiometricManager
-from backend.utils.auth import hash_password
-from backend.config.settings import settings
-from backend.services.logging_service import LoggingService
+from models.schemas import UserCreate
+from database.user_manager import UserManager
+from database.biometric_manager import BiometricManager
+from utils.auth import hash_password
+from config.settings import settings
+from services.logging_service import LoggingService
 
 router = APIRouter(
     prefix="/register",

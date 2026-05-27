@@ -1,11 +1,11 @@
 import threading
 
-from backend.services.whatsapp_service import (
+from services.whatsapp_service import (
     WhatsAppService
 )
 
 
-from backend.services.logging_service import (
+from services.logging_service import (
     LoggingService
 )
 

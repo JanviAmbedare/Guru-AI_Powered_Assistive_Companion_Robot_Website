@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException
-from backend.database.user_manager import UserManager
-from backend.models.schemas import LoginRequest, UserCreate
-from backend.utils.auth import (
+from database.user_manager import UserManager
+from models.schemas import LoginRequest, UserCreate
+from utils.auth import (
     verify_password,
     create_access_token,
     hash_password
 )
-from backend.services.logging_service import LoggingService
+from services.logging_service import LoggingService
 
 router = APIRouter(prefix="/auth",tags=["Authentication"])
 

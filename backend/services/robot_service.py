@@ -1,4 +1,4 @@
-from backend.services.command_service import RobotCommandService
+from services.command_service import RobotCommandService
 
 
 class RobotService:

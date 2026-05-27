@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException
 from flask import Blueprint, jsonify, request
-from backend.models.schemas import ProfileCreate
-from backend.database.profile_manager import UserProfileManager
-from backend.database.db_utils import execute_query
-from backend.database.memory_manager import MemoryManager
-from backend.services.context_memory_service import ContextMemoryService
-from backend.services.daily_summary_service import DailySummaryService
-from backend.services.emotion_service import EmotionPredictionService
+from models.schemas import ProfileCreate
+from database.profile_manager import UserProfileManager
+from database.db_utils import execute_query
+from database.memory_manager import MemoryManager
+from services.context_memory_service import ContextMemoryService
+from services.daily_summary_service import DailySummaryService
+from services.emotion_service import EmotionPredictionService
 router = APIRouter()
 
 memory_bp = Blueprint(

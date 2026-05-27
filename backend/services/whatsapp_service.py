@@ -1,8 +1,7 @@
 from twilio.rest import Client
 
-from backend.config.settings import settings
-
-from backend.services.logging_service import (
+from config.settings import settings
+from services.logging_service import (
     LoggingService
 )
 

@@ -1,6 +1,6 @@
-from backend.database.db_utils import execute_query
+from database.db_utils import execute_query
 from sentence_transformers import SentenceTransformer
-from backend.models.model_manager import ModelManager
+from models.model_manager import ModelManager
 import numpy as np
 
 

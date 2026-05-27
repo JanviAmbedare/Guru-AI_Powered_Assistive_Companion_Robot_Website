@@ -59,3 +59,10 @@ class ConversationCreate(BaseModel):
     intent: str
     response: str
     sentiment: Optional[str]
+
+from pydantic import BaseModel
+
+class ChatRequest(BaseModel):
+
+    user_id: int
+    text: str = Field(..., min_length=1)

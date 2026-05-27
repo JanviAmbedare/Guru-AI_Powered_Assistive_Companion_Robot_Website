@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
-from backend.models.model_manager import ModelManager
-from backend.routes import (
+# from models.model_manager import ModelManager
+from routes import (
     registration_routes,
     dashboard_routes,
     reminder_routes,
@@ -16,13 +16,13 @@ from backend.routes import (
     chat_routes,
     health_routes
 )
-from backend.routes.analytics_socket import (
+from routes.analytics_socket import (
     router as analytics_socket_router
 )
-from backend.routes.memory_routes import router as memory_router
+from routes.memory_routes import router as memory_router
 import threading
 
-from backend.services.reminder_scheduler import (
+from services.reminder_scheduler import (
     ReminderScheduler
 )
 
@@ -33,7 +33,7 @@ scheduler_thread = threading.Thread(
 
 scheduler_thread.start()
 
-from backend.services.logging_service import (
+from services.logging_service import (
     LoggingService
 )
 
@@ -172,9 +172,8 @@ async def global_exception_handler(
             "message": str(exc)
         }
     )
-    
 
-@app.on_event("startup")
-async def startup_event():
+# @app.on_event("startup")
+# async def startup_event():
 
-    ModelManager.load_models()
+#     ModelManager.load_models()

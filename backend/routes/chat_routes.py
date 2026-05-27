@@ -1,28 +1,41 @@
 from fastapi import APIRouter, Depends
-from backend.models.schemas import ConversationCreate
-from backend.services.ai_service import GuruAIService
-from backend.utils.dependencies import get_current_user
-from backend.services.logging_service import LoggingService
+from models.schemas import ChatRequest
+from utils.dependencies import get_current_user
+from services.logging_service import LoggingService
 
-router = APIRouter(prefix="/chat", tags=["AI Chat"])
+import requests
 
+router = APIRouter(
+    prefix="/chat",
+    tags=["AI Chat"]
+)
+
+AI_SERVICE_URL = (
+    "https://guru-ai-service.onrender.com/chat"
+)
 
 @router.post("/")
 def chat(
-    data: ConversationCreate,
+    data: ChatRequest,
     user=Depends(get_current_user)
 ):
 
     if user["user_id"] != data.user_id:
+
         return {
             "status": "error",
             "message": "Unauthorized"
         }
 
-    result = GuruAIService.process_message(
-        user_id=data.user_id,
-        text=data.text
+    response = requests.post(
+        AI_SERVICE_URL,
+        json={
+            "user_id": data.user_id,
+            "message": data.text
+        }
     )
+
+    result = response.json()
 
     LoggingService.info(
         f"Chat message from user {data.user_id}"

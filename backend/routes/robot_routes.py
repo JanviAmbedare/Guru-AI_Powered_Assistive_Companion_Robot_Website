@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
-from backend.services.robot_service import RobotService
-from backend.utils.dependencies import require_role
+from services.robot_service import RobotService
+from utils.dependencies import require_role
 
 router = APIRouter(
     prefix="/robot",

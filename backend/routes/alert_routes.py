@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from backend.services.alert_service import (
+from services.alert_service import (
     AlertService
 )
 

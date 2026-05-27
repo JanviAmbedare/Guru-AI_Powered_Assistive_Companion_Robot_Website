@@ -1,14 +1,10 @@
 from datetime import datetime
 
-from backend.database.db_utils import execute_query
-from backend.services.whatsapp_service import WhatsAppService
-from backend.services.logging_service import (
-    LoggingService
-)
-from backend.config.settings import settings
-from backend.services.robot_service import (
-    RobotService
-)
+from database.db_utils import execute_query
+from services.whatsapp_service import WhatsAppService
+from services.logging_service import (LoggingService)
+from config.settings import settings
+from services.robot_service import (    RobotService)
 
 import threading
 

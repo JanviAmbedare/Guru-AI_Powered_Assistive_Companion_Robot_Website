@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
-from backend.database.db_connection import get_connection
-from backend.utils.dependencies import require_role, get_current_user
+from database.db_connection import get_connection
+from utils.dependencies import require_role, get_current_user
 
 router = APIRouter()
 

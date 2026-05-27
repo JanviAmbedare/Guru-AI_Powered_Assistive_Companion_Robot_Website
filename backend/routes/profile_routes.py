@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from backend.models.schemas import ProfileCreate
-from backend.database.profile_manager import UserProfileManager
+from models.schemas import ProfileCreate
+from database.profile_manager import UserProfileManager
 
 router = APIRouter()
 

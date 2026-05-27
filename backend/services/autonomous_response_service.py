@@ -1,4 +1,4 @@
-from backend.services.emotion_service import EmotionPredictionService
+from services.emotion_service import EmotionPredictionService
 
 class AutonomousResponseService:
 

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from backend.database.reminder_manager import ReminderManager
+from database.reminder_manager import ReminderManager
 
 router = APIRouter(
     prefix="/reminder",

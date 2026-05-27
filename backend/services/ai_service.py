@@ -1,14 +1,14 @@
 import joblib
 from datetime import datetime
 
-from backend.database.memory_manager import MemoryManager
-from backend.database.profile_manager import UserProfileManager
-from backend.database.reminder_manager import ReminderManager
-from backend.config.settings import Settings
-from backend.services.robot_service import RobotService
-from backend.services.alert_service import AlertService
-from backend.services.logging_service import LoggingService
-from backend.services.context_memory_service import (
+from database.memory_manager import MemoryManager
+from database.profile_manager import UserProfileManager
+from database.reminder_manager import ReminderManager
+from config.settings import Settings
+from services.robot_service import RobotService
+from services.alert_service import AlertService
+from services.logging_service import LoggingService
+from services.context_memory_service import (
     ContextMemoryService
 )
 

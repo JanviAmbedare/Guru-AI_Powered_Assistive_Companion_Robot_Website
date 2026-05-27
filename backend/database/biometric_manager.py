@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from backend.database.db_utils import execute_query
+from database.db_utils import execute_query
 
 
 class BiometricManager:

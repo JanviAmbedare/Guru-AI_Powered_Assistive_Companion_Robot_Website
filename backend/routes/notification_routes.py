@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from backend.services.notification_service import (
+from services.notification_service import (
     NotificationService
 )
 

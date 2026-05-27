@@ -1,9 +1,14 @@
+import requests
 from fastapi import APIRouter, WebSocket
-from backend.services.ai_service import GuruAIService
 
 router = APIRouter()
 
+AI_SERVICE_URL = (
+    "https://guru-ai-service.onrender.com/chat"
+)
+
 @router.websocket("/ws/chat/{user_id}")
+
 async def websocket_chat(
     websocket: WebSocket,
     user_id: int
@@ -15,12 +20,14 @@ async def websocket_chat(
 
         text = await websocket.receive_text()
 
-        response = (
-            GuruAIService
-            .process_message(
-                user_id,
-                text
-            )
+        response = requests.post(
+            AI_SERVICE_URL,
+            json={
+                "user_id": user_id,
+                "message": text
+            }
         )
 
-        await websocket.send_json(response)
+        result = response.json()
+
+        await websocket.send_json(result)
