@@ -1,25 +1,51 @@
 from fastapi import APIRouter, HTTPException, Depends
 from database.db_connection import get_connection
 from utils.dependencies import require_role, get_current_user
-
+from database.db_utils import execute_query
 router = APIRouter()
 
-def execute_query(query, params=None):
-    try:
-        conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+# def execute_query(
+#     query,
+#     params=None,
+#     fetch=False,
+#     fetch_one=False,
+#     dictionary=False
+# ):
+#     try:
+#         conn = get_connection()
 
-        cursor.execute(query, params or ())
-        data = cursor.fetchall()
+#         cursor = conn.cursor(
+#             dictionary=dictionary
+#         )
 
-        return data
+#         cursor.execute(
+#             query,
+#             params or ()
+#         )
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+#         if fetch_one:
+#             return cursor.fetchone()
 
-    finally:
-        cursor.close()
-        conn.close()
+#         if fetch:
+#             return cursor.fetchall()
+
+#         conn.commit()
+
+#         return {
+#             "status": "success"
+#         }
+
+#     except Exception as e:
+
+#         raise HTTPException(
+#             status_code=500,
+#             detail=str(e)
+#         )
+
+#     finally:
+
+#         cursor.close()
+#         conn.close()
 
 
 @router.get("/dashboard/users")
