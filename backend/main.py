@@ -18,7 +18,7 @@ from routes import (
 from routes.analytics_socket import (
     router as analytics_socket_router
 )
-from routes.memory_routes import router as memory_router
+
 import threading
 
 from services.reminder_scheduler import (
@@ -117,11 +117,11 @@ app.include_router(
     analytics_socket_router
 )
 
-app.include_router(
-    memory_router,
-    prefix="/api/memory",
-    tags=["Memory"]
-)
+# app.include_router(
+#     memory_router,
+#     prefix="/api/memory",
+#     tags=["Memory"]
+# )
 # =========================
 # 🏠 ROOT
 # =========================

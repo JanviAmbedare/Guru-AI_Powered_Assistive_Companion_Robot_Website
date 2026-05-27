@@ -1,25 +1,25 @@
-from services.emotion_service import EmotionPredictionService
+# from services.emotion_service import EmotionPredictionService
 
-class AutonomousResponseService:
+# class AutonomousResponseService:
 
-    @staticmethod
-    def generate(user_id):
+#     @staticmethod
+#     def generate(user_id):
 
-        emotion = EmotionPredictionService.predict(user_id)
+#         emotion = EmotionPredictionService.predict(user_id)
 
-        if emotion["risk_level"] == "high":
+#         if emotion["risk_level"] == "high":
 
-            return {
-                "action":"support",
-                "message":
-                """
-                You seem emotionally stressed.
-                Would you like calming music,
-                breathing exercises,
-                or emergency contact support?
-                """
-            }
+#             return {
+#                 "action":"support",
+#                 "message":
+#                 """
+#                 You seem emotionally stressed.
+#                 Would you like calming music,
+#                 breathing exercises,
+#                 or emergency contact support?
+#                 """
+#             }
 
-        return {
-            "action":"none"
-        }
+#         return {
+#             "action":"none"
+#         }
