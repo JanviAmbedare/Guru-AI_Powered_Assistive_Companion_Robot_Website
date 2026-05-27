@@ -9,7 +9,6 @@ from routes import (
     reminder_routes,
     profile_routes,
     auth_routes,
-    memory_routes,
     robot_routes,
     notification_routes,
     alert_routes,
@@ -102,7 +101,7 @@ app.include_router(reminder_routes.router)
 
 app.include_router(profile_routes.router)
 
-app.include_router(memory_routes.router)
+
 
 app.include_router(chat_routes.router)
 
