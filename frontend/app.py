@@ -13,7 +13,7 @@ import traceback
 import os
 import base64
 from datetime import datetime
-from backend.services.api_service import *
+from services.api_service import *
 from flask_cors import CORS
 
 app = Flask(__name__)
