@@ -2,12 +2,31 @@ class QueueService:
 
     @staticmethod
     def add_job(
-        job_type,
-        data
+        user_id,
+        job_type
     ):
 
-        print(
-            f"QUEUE JOB: {job_type}"
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO model_training_queue
+            (
+                user_id,
+                type,
+                status
+            )
+            VALUES
+            (%s,%s,'pending')
+            """,
+            (
+                user_id,
+                job_type
+            )
         )
 
-        return True
+        conn.commit()
+
+        cursor.close()
+        conn.close()

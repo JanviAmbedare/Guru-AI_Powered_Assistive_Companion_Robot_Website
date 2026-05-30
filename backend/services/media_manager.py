@@ -3,6 +3,7 @@ import uuid
 
 from dotenv import load_dotenv
 
+from services.queue_service import QueueService
 from services.cloudinary_service import (
     CloudinaryService
 )
@@ -78,7 +79,8 @@ class MediaManager:
             unique_name
         )
 
-        file.save(local_path)
+        with open(local_path, "wb") as buffer:
+            buffer.write(file.file.read())
 
         return (
             local_path,
@@ -263,6 +265,11 @@ class MediaManager:
                     cloud_result["secure_url"]
             })
 
+            # Add face processing job to queue
+            QueueService.add_job(
+                user_id=user_id,
+                job_type="face"
+            )
         return uploaded_files
 
 
@@ -349,5 +356,11 @@ class MediaManager:
                 "cloudinary_url":
                     cloud_result["secure_url"]
             })
+
+            # Add voice processing job to queue
+            QueueService.add_job(
+                user_id=user_id,
+                job_type="voice"
+            )
 
         return uploaded_files

@@ -47,92 +47,92 @@ def register_user(data: UserCreate):
         "user_id": user_id
     }
 
-FACE_STORAGE = "backend/storage/faces"
+# FACE_STORAGE = "backend/storage/faces"
 
-@router.post("/face/{user_id}")
-async def upload_face(
-    user_id: int,
-    files: list[UploadFile] = File(...)
-):
+# @router.post("/face/{user_id}")
+# async def upload_face(
+#     user_id: int,
+#     files: list[UploadFile] = File(...)
+# ):
 
-    save_dir = os.path.join(
-        FACE_STORAGE,
-        str(user_id)
-    )
+#     save_dir = os.path.join(
+#         FACE_STORAGE,
+#         str(user_id)
+#     )
 
-    os.makedirs(save_dir, exist_ok=True)
+#     os.makedirs(save_dir, exist_ok=True)
 
-    count = 0
+#     count = 0
 
-    for file in files:
+#     for file in files:
 
-        file_path = os.path.join(
-            save_dir,
-            file.filename
-        )
+#         file_path = os.path.join(
+#             save_dir,
+#             file.filename
+#         )
 
-        with open(file_path, "wb") as f:
+#         with open(file_path, "wb") as f:
 
-            f.write(await file.read())
+#             f.write(await file.read())
 
-        count += 1
-    # Save biometric record for each uploaded face sample
-    bio_mgr.save_biometric(
-    user_id=user_id,
-    bio_type="FACE",
-    file_path=save_dir,
-    sample_number=count,
-    quality_score=95.0
-        )
-    return {
-        "status": "success",
-        "saved": count,
-        "path": save_dir
-    }
-
-
-VOICE_STORAGE = "backend/storage/voices"
+#         count += 1
+#     # Save biometric record for each uploaded face sample
+#     bio_mgr.save_biometric(
+#     user_id=user_id,
+#     bio_type="FACE",
+#     file_path=save_dir,
+#     sample_number=count,
+#     quality_score=95.0
+#         )
+#     return {
+#         "status": "success",
+#         "saved": count,
+#         "path": save_dir
+#     }
 
 
-@router.post("/voice/{user_id}")
-async def upload_voice(
-    user_id: int,
-    files: list[UploadFile] = File(...)
-):
-
-    save_dir = os.path.join(
-        VOICE_STORAGE,
-        str(user_id)
-    )
-
-    os.makedirs(save_dir, exist_ok=True)
-
-    count = 0
-
-    for file in files:
-
-        file_path = os.path.join(
-            save_dir,
-            file.filename
-        )
-
-        with open(file_path, "wb") as f:
-
-            f.write(await file.read())
-
-        count += 1
-    # Save biometric record for each uploaded voice sample
-    bio_mgr.save_biometric(
-    user_id=user_id,
-    bio_type="VOICE",
-    file_path=save_dir,
-    sample_number=count,
-    quality_score=92.0
-        )
+# VOICE_STORAGE = "backend/storage/voices"
 
 
-    return {
-        "status": "success",
-        "saved": count,
-        "path": save_dir
-    }
+# @router.post("/voice/{user_id}")
+# async def upload_voice(
+#     user_id: int,
+#     files: list[UploadFile] = File(...)
+# ):
+
+#     save_dir = os.path.join(
+#         VOICE_STORAGE,
+#         str(user_id)
+#     )
+
+#     os.makedirs(save_dir, exist_ok=True)
+
+#     count = 0
+
+#     for file in files:
+
+#         file_path = os.path.join(
+#             save_dir,
+#             file.filename
+#         )
+
+#         with open(file_path, "wb") as f:
+
+#             f.write(await file.read())
+
+#         count += 1
+#     # Save biometric record for each uploaded voice sample
+#     bio_mgr.save_biometric(
+#     user_id=user_id,
+#     bio_type="VOICE",
+#     file_path=save_dir,
+#     sample_number=count,
+#     quality_score=92.0
+#         )
+
+
+#     return {
+#         "status": "success",
+#         "saved": count,
+#         "path": save_dir
+#     }
