@@ -1,69 +1,64 @@
-# from transformers import pipeline
-# from database.db_utils import execute_query
-# from collections import Counter
+from database.db_connection import get_connection
 
-# emotion_classifier = pipeline(
-#     "text-classification",
-#     model="j-hartmann/emotion-english-distilroberta-base"
-# )
 
-# class EmotionService:
+class EmotionService:
 
-#     @staticmethod
-#     def detect(text):
+    @staticmethod
+    def get_latest(user_id: int):
 
-#         result = emotion_classifier(text)[0]
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
 
-#         return {
-#             "emotion": result["label"],
-#             "confidence": result["score"]
-#         }
+        cursor.execute("""
+            SELECT
+                emotion,
+                confidence,
+                source_text,
+                created_at
+            FROM emotion_logs
+            WHERE user_id = %s
+            ORDER BY created_at DESC
+            LIMIT 1
+        """, (user_id,))
 
-# class EmotionPredictionService:
+        emotion = cursor.fetchone()
 
-#     @staticmethod
-#     def predict(user_id):
+        cursor.close()
+        conn.close()
 
-#         emotions = execute_query("""
-#             SELECT sentiment
-#             FROM conversations
-#             WHERE user_id=%s
-#             ORDER BY timestamp DESC
-#             LIMIT 20
-#         """,(user_id,),
-#         fetch=True,
-#         dictionary=True)
+        return emotion or {
+            "emotion": "unknown",
+            "confidence": 0,
+            "source_text": None,
+            "created_at": None
+        }
+    @staticmethod
+    def get_history(
+        user_id: int,
+        limit: int = 50
+    ):
 
-#         if not emotions:
-#             return {
-#                 "prediction":"neutral"
-#             }
+        conn = get_connection()
 
-#         vals = [
-#             e["sentiment"]
-#             for e in emotions
-#         ]
+        cursor = conn.cursor(
+            dictionary=True
+        )
 
-#         dominant = Counter(vals).most_common(1)[0][0]
+        cursor.execute("""
+            SELECT
+                emotion,
+                confidence,
+                source_text,
+                created_at
+            FROM emotion_logs
+            WHERE user_id=%s
+            ORDER BY created_at DESC
+            LIMIT %s
+        """, (user_id, limit))
 
-#         risk = "low"
+        rows = cursor.fetchall()
 
-#         negative = [
-#             "sad",
-#             "angry",
-#             "fear",
-#             "stress"
-#         ]
+        cursor.close()
+        conn.close()
 
-#         negative_count = len([
-#             v for v in vals
-#             if v in negative
-#         ])
-
-#         if negative_count > 10:
-#             risk = "high"
-
-#         return {
-#             "prediction":dominant,
-#             "risk_level":risk
-#         }
+        return rows

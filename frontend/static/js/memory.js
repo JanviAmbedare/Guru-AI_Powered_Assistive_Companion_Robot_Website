@@ -1,139 +1,225 @@
-const USER_ID = 1;
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
 
-async function loadMemories(){
+        await loadDashboard();
 
-    const response = await fetch(`/api/memory/${USER_ID}`);
-    const data = await response.json();
+    }
+);
 
-    const list = document.getElementById("memoryList");
+let emotionChart = null;
 
-    list.innerHTML = "";
 
-    document.getElementById("memoryCount").innerText = data.length;
+/* ==========================
+   LOAD ALL DATA
+========================== */
 
-    data.forEach(memory => {
+async function loadDashboard(){
 
-        const div = document.createElement("div");
+    try{
 
-        div.className = "memory-item";
+        const [
+            conversations,
+            analytics,
+            emotions,
+            latestEmotion
+        ] = await Promise.all([
 
-        div.innerHTML = `
-            <h4>${memory.intent}</h4>
-            <p>${memory.text}</p>
-        `;
+            apiRequest(
+                "GET",
+                `/conversations/${USER_ID}`
+            ),
 
-        div.onclick = () => showMemory(memory);
+            apiRequest(
+                "GET",
+                `/analytics/conversations/${USER_ID}`
+            ),
 
-        list.appendChild(div);
+            apiRequest(
+                "GET",
+                `/emotion/history/${USER_ID}`
+            ),
 
-    });
+            apiRequest(
+                "GET",
+                `/emotion/latest/${USER_ID}`
+            )
+        ]);
 
+        populateConversationList(
+            conversations.history || []
+        );
+
+        populateAnalytics(
+            analytics
+        );
+
+        populateEmotionChart(
+            emotions
+        );
+
+        populateLatestEmotion(
+            latestEmotion
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Memory load error:",
+            error
+        );
+    }
 }
 
-function showMemory(memory){
+function populateConversationList(
+    conversations
+){
 
-    document.getElementById("memoryContent").innerHTML = `
-        <h4>User Input</h4>
-        <p>${memory.text}</p>
+    const memoryList =
+        document.getElementById(
+            "memoryList"
+        );
 
-        <h4>AI Response</h4>
-        <p>${memory.response}</p>
+    memoryList.innerHTML = "";
 
-        <h4>Emotion</h4>
-        <p>${memory.sentiment}</p>
-    `;
+    conversations.forEach(
+        (item,index) => {
 
-    document.getElementById("latestEmotion").innerText =
-        memory.sentiment;
-}
+            const div =
+                document.createElement(
+                    "div"
+                );
 
-async function loadEmotionTimeline(){
+            div.className =
+                "memory-item";
 
-    const response =
-        await fetch(`/api/profile/timeline/${USER_ID}`);
+            div.innerHTML = `
 
-    const data = await response.json();
+                <strong>
+                    ${item.intent || "General"}
+                </strong>
 
-    const labels = data.map(x => x.day);
-    const values = data.map(x => x.total);
+                <p>
+                    ${item.user_input || ""}
+                </p>
 
-    new Chart(
-        document.getElementById("emotionChart"),
-        {
-            type:"line",
+            `;
 
-            data:{
-                labels:labels,
+            div.onclick =
+                () =>
+                showMemoryDetails(
+                    item
+                );
 
-                datasets:[{
-                    label:"Emotion Frequency",
-                    data:values
-                }]
-            }
+            memoryList.appendChild(
+                div
+            );
         }
     );
 }
 
-async function searchMemory(){
-
-    const query =
-        document.getElementById("memorySearch").value;
-
-    const response =
-        await fetch(`/api/memory/search/${USER_ID}?q=${query}`);
-
-    const data = await response.json();
-
-    const list = document.getElementById("memoryList");
-
-    list.innerHTML = "";
-
-    data.forEach(item => {
-
-        const memory = item.memory;
-
-        const div = document.createElement("div");
-
-        div.className = "memory-item";
-
-        div.innerHTML = `
-            <h4>Similarity:
-            ${item.score.toFixed(2)}</h4>
-
-            <p>${memory.summary}</p>
-        `;
-
-        list.appendChild(div);
-
-    });
-
-}
-async function loadDailySummary(){
-
-    const response =
-        await fetch(`/api/memory/daily-summary/${USER_ID}`);
-
-    const data = await response.json();
-
-    document.getElementById("dailySummary").innerHTML = `
-        <p>${data.summary}</p>
-    `;
-}
-async function loadEmotionPrediction(){
-
-    const response =
-        await fetch(`/api/memory/emotion-predict/${USER_ID}`);
-
-    const data = await response.json();
+function showMemoryDetails(
+    memory
+){
 
     document.getElementById(
-        "emotionPrediction"
+        "memoryContent"
     ).innerHTML = `
-        ${data.prediction}
-        (${data.risk_level})
+
+        <h4>User</h4>
+
+        <p>
+            ${memory.user_input}
+        </p>
+
+        <h4>Response</h4>
+
+        <p>
+            ${memory.response_text}
+        </p>
+
+        <h4>Intent</h4>
+
+        <p>
+            ${memory.intent}
+        </p>
+
+        <h4>Emotion</h4>
+
+        <p>
+            ${memory.emotion}
+        </p>
+
     `;
 }
-loadMemories();
-loadEmotionTimeline();
-loadDailySummary();
-loadEmotionPrediction();
+
+function populateAnalytics(
+    analytics
+){
+
+    document.getElementById(
+        "memoryCount"
+    ).innerText =
+        analytics.total_interactions || 0;
+}
+
+function populateLatestEmotion(
+    emotion
+){
+
+    document.getElementById(
+        "latestEmotion"
+    ).innerText =
+        emotion.emotion || "Unknown";
+}
+
+function populateEmotionChart(
+    emotions
+){
+
+    const ctx =
+        document.getElementById(
+            "emotionChart"
+        );
+
+    const labels =
+        emotions.map(
+            e => e.created_at
+        );
+
+    const values =
+        emotions.map(
+            e => e.confidence
+        );
+
+    if(emotionChart){
+
+        emotionChart.destroy();
+    }
+
+    emotionChart =
+        new Chart(ctx,{
+
+            type:"line",
+
+            data:{
+
+                labels,
+
+                datasets:[{
+
+                    label:
+                        "Emotion Confidence",
+
+                    data:values,
+
+                    borderColor:
+                        "#38bdf8",
+
+                    tension:0.3
+                }]
+            }
+        });
+}

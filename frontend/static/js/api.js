@@ -457,51 +457,100 @@ async function healthCheck() {
     );
 }
 
+// =====================================================
+// 📤 MEDIA UPLOAD APIs
+// =====================================================
+async function uploadAllMedia(
+    userId,
+    formData
+){
 
+    const response =
+        await fetch(
+
+            `${BASE_URL}/registration/upload-all/${userId}`,
+
+            {
+                method:"POST",
+                body:formData
+            }
+        );
+
+    return await response.json();
+}
+// =====================================
+// FACE MODEL TRAINING
+// =====================================
+// async function trainFaceModel(
+//     userId
+// ){
+
+//     return await apiRequest(
+
+//         "POST",
+
+//         `/training/face/${userId}`
+//     );
+// }
+
+// // =====================================
+// // VOICE MODEL TRAINING
+// // =====================================
+// async function trainVoiceModel(
+//     userId
+// ){
+
+//     return await apiRequest(
+
+//         "POST",
+
+//         `/training/voice/${userId}`
+//     );
+// }
 // =====================================
 // FACE UPLOAD
 // =====================================
 
-async function uploadFaceData(
-    userId,
-    formData
-){
+// async function uploadFaceData(
+//     userId,
+//     formData
+// ){
 
-    const response = await fetch(
+//     const response = await fetch(
 
-        `${BASE_URL}/register/face/${userId}`,
+//         `${BASE_URL}/register/face/${userId}`,
 
-        {
-            method: "POST",
+//         {
+//             method: "POST",
 
-            body: formData
-        }
-    );
+//             body: formData
+//         }
+//     );
 
-    return await response.json();
-}
+//     return await response.json();
+// }
 
 
 
-// =====================================
-// VOICE UPLOAD
-// =====================================
+// // =====================================
+// // VOICE UPLOAD
+// // =====================================
 
-async function uploadVoiceData(
-    userId,
-    formData
-){
+// async function uploadVoiceData(
+//     userId,
+//     formData
+// ){
 
-    const response = await fetch(
+//     const response = await fetch(
 
-        `${BASE_URL}/register/voice/${userId}`,
+//         `${BASE_URL}/register/voice/${userId}`,
 
-        {
-            method: "POST",
+//         {
+//             method: "POST",
 
-            body: formData
-        }
-    );
+//             body: formData
+//         }
+//     );
 
-    return await response.json();
-}
+//     return await response.json();
+// }

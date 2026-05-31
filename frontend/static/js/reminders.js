@@ -1,92 +1,208 @@
 function openModal(){
 
     document
-    .getElementById("modal")
-    .style.display = "flex";
+        .getElementById(
+            "modal"
+        )
+        .style.display =
+        "flex";
 }
 
-
-async function createReminder(){
-    let remindAt =
-    document.getElementById(
-        "remindAt"
-    ).value;
-
-    remindAt = remindAt.replace("T", " ");
-    const data = {
-
-        user_id: USER_ID,
-
-        title:
-            document.getElementById(
-                "title"
-            ).value,
-
-        message:
-            document.getElementById(
-                "message"
-            ).value,
-
-        remind_at: remindAt,
-
-        priority:
-            document.getElementById(
-                "priority"
-            ).value
-    };
-
-    const response = await fetch(
-        "/create-reminder",
-        {
-            method:"POST",
-
-            headers:{
-                "Content-Type":
-                "application/json"
-            },
-
-            body: JSON.stringify(data)
-        }
-    );
-
-    const result =
-        await response.json();
-
-    if(result.status === "success"){
-
-        location.reload();
-    }
-}
-
-
-async function completeReminder(id){
-
-    await fetch(
-        `/complete-reminder/${id}`,
-        {
-            method:"PUT"
-        }
-    );
-
-    location.reload();
-}
-
-
-async function deleteReminder(id){
-
-    await fetch(
-        `/delete-reminder/${id}`,
-        {
-            method:"DELETE"
-        }
-    );
-
-    location.reload();
-}
 
 function closeModal(){
 
     document
-    .getElementById("modal")
-    .style.display = "none";
+        .getElementById(
+            "modal"
+        )
+        .style.display =
+        "none";
+}
+
+
+/* ==========================
+   CREATE REMINDER
+========================== */
+
+async function createReminder(){
+
+    try{
+
+        const remindAt =
+            document
+            .getElementById(
+                "remindAt"
+            )
+            .value
+            .replace(
+                "T",
+                " "
+            );
+
+        const payload = {
+
+            user_id:
+                USER_ID,
+
+            title:
+                document
+                .getElementById(
+                    "title"
+                )
+                .value,
+
+            message:
+                document
+                .getElementById(
+                    "message"
+                )
+                .value,
+
+            remind_at:
+                remindAt,
+
+            priority:
+                document
+                .getElementById(
+                    "priority"
+                )
+                .value
+        };
+
+        await apiRequest(
+            "POST",
+            "/reminder/",
+            null,
+            payload
+        );
+
+        closeModal();
+
+        loadReminders();
+
+    }
+
+    catch(error){
+
+        console.error(
+            error
+        );
+
+        alert(
+            "Failed to create reminder"
+        );
+    }
+}
+
+
+/* ==========================
+   LOAD REMINDERS
+========================== */
+
+async function loadReminders(){
+
+    try{
+
+        const reminders =
+            await apiRequest(
+                "GET",
+                `/reminder/${USER_ID}`
+            );
+
+        renderReminders(
+            reminders
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            error
+        );
+    }
+}
+
+
+/* ==========================
+   DONE
+========================== */
+
+async function completeReminder(
+    reminderId
+){
+
+    try{
+
+        await apiRequest(
+            "PUT",
+            `/reminder/done/${USER_ID}/${reminderId}`
+        );
+
+        loadReminders();
+
+    }
+
+    catch(error){
+
+        console.error(
+            error
+        );
+    }
+}
+
+
+/* ==========================
+   DELETE
+========================== */
+
+async function deleteReminder(
+    reminderId
+){
+
+    try{
+
+        await apiRequest(
+            "DELETE",
+            `/reminder/${USER_ID}/${reminderId}`
+        );
+
+        loadReminders();
+
+    }
+
+    catch(error){
+
+        console.error(
+            error
+        );
+    }
+}
+
+
+/* ==========================
+   SNOOZE
+========================== */
+
+async function snoozeReminder(
+    reminderId
+){
+
+    try{
+
+        await apiRequest(
+            "PUT",
+            `/reminder/snooze/${USER_ID}/${reminderId}`
+        );
+
+        loadReminders();
+
+    }
+
+    catch(error){
+
+        console.error(
+            error
+        );
+    }
 }

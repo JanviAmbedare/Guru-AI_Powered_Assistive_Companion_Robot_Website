@@ -14,13 +14,36 @@ router = APIRouter(
 # 📥 GET ALERTS
 # =========================
 
-@router.get("/{user_id}")
-def get_alerts(user_id: int):
+@staticmethod
+def get_user_alerts(
+    user_id: int
+):
 
-    return AlertService.get_alerts(
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT *
+        FROM alerts
+        WHERE user_id=%s
+        ORDER BY created_at DESC
+    """, (user_id,))
+
+    alerts = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return alerts
+
+@router.get("/{user_id}")
+def get_alerts(
+    user_id: int
+):
+
+    return AlertService.get_user_alerts(
         user_id
     )
-
 
 # =========================
 # 🚨 EMERGENCY

@@ -1,7 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends
+from services.robot_service import RobotService
 from database.db_connection import get_connection
 from utils.dependencies import require_role, get_current_user
 from database.db_utils import execute_query
+from services.conversation_service import ConversationService
 router = APIRouter()
 
 # def execute_query(
@@ -59,13 +61,30 @@ def get_reminders(user_id: int):
         "SELECT * FROM reminders WHERE user_id=%s",
         (user_id,)
     )
+@router.get("/status/{robot_id}")
+def robot_status(robot_id: int):
+
+    return RobotService.get_status(
+        robot_id
+    )
 
 
 @router.get("/conversations/{user_id}")
 def get_conversations(user_id: int):
-    return execute_query(
-        "SELECT * FROM conversations WHERE user_id=%s ORDER BY timestamp DESC",
-        (user_id,)
+
+    return {
+        "user_id": user_id,
+        "history":
+            ConversationService.get_history(
+                user_id
+            )
+    }
+
+@router.get("/analytics/conversations/{user_id}")
+def conversation_analytics(user_id: int):
+
+    return ConversationService.get_analytics(
+        user_id
     )
 
 @router.get("/profile/{user_id}")

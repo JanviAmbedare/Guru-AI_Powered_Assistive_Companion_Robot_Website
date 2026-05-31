@@ -84,3 +84,24 @@ async def upload_voice(
             status_code=500,
             detail=str(e)
         )
+
+@router.get("/status/{user_id}")
+def media_status(user_id: int):
+
+    media = MediaManager.get_media_status(
+        user_id
+    )
+
+    return {
+        "face_uploaded":
+            media["face_uploaded"],
+
+        "voice_uploaded":
+            media["voice_uploaded"],
+
+        "face_count":
+            media["face_count"],
+
+        "voice_count":
+            media["voice_count"]
+    }

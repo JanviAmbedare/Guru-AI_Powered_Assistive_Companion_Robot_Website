@@ -1,8 +1,3 @@
-import {
-    uploadFaceData
-}
-from "../services/api_services.js";
-
 const video = document.getElementById("video");
 
 const sampleCountText =
@@ -92,19 +87,13 @@ function captureFrame(){
         canvas.height
     );
 
-    canvas.toBlob(blob => {
+    canvas.toBlob(async blob => {
 
         capturedImages.push(blob);
 
+        await saveFace(blob);
+
         updateUI();
-
-        // AUTO UPLOAD
-        if(capturedImages.length >= MAX_SAMPLES){
-
-            stopCapture();
-
-            uploadFaces();
-        }
 
     }, "image/jpeg");
 
@@ -134,15 +123,19 @@ async function startCapture(){
 
     captureInterval = setInterval(() => {
 
-        if(capturedImages.length < MAX_SAMPLES){
+        captureFrame();
 
-            captureFrame();
+        if(capturedImages.length >= MAX_SAMPLES){
 
+            stopCapture();
+
+            window.location.href =
+                `/capture-voice/${USER_ID}`;
         }
 
     }, 250);
 
-}
+    }
 
 
 // =========================
@@ -185,89 +178,89 @@ function updateUI(){
 // ☁️ UPLOAD FACE DATA
 // =========================
 
-async function uploadFaces(){
+// async function uploadFaces(){
 
-    loader.style.display = "block";
+//     loader.style.display = "block";
 
-    statusText.innerHTML = "Uploading";
+//     statusText.innerHTML = "Uploading";
 
-    message.innerHTML =
-        "☁️ Uploading facial samples...";
+//     message.innerHTML =
+//         "☁️ Uploading facial samples...";
 
-    const formData = new FormData();
+//     const formData = new FormData();
 
-    capturedImages.forEach((blob, index) => {
+//     capturedImages.forEach((blob, index) => {
 
-        formData.append(
-            "files",
-            blob,
-            `face_${index}.jpg`
-        );
+//         formData.append(
+//             "files",
+//             blob,
+//             `face_${index}.jpg`
+//         );
 
-    });
+//     });
 
-    // IMPORTANT
-    formData.append(
-        "media_role",
-        "raw"
-    );
+//     // IMPORTANT
+//     formData.append(
+//         "media_role",
+//         "raw"
+//     );
 
-    try{
+//     try{
 
-        const result =
-            await uploadFaceData(
-                USER_ID,
-                formData
-            );
+//         const result =
+//             await uploadFaceData(
+//                 USER_ID,
+//                 formData
+//             );
 
-        loader.style.display = "none";
+//         loader.style.display = "none";
 
-        console.log(result);
+//         console.log(result);
 
-        if(result.status === "success"){
+//         if(result.status === "success"){
 
-            message.innerHTML =
-                "✅ Face registration completed";
+//             message.innerHTML =
+//                 "✅ Face registration completed";
 
-            message.className =
-                "status success";
+//             message.className =
+//                 "status success";
 
-            statusText.innerHTML =
-                "Completed";
+//             statusText.innerHTML =
+//                 "Completed";
 
-            setTimeout(() => {
+//             setTimeout(() => {
 
-                window.location.href =
-                    `/capture-voice/${USER_ID}`;
+//                 window.location.href =
+//                     `/capture-voice/${USER_ID}`;
 
-            }, 2000);
+//             }, 2000);
 
-        }
+//         }
 
-        else{
+//         else{
 
-            message.innerHTML =
-                "❌ Upload failed";
+//             message.innerHTML =
+//                 "❌ Upload failed";
 
-            message.className =
-                "status error";
-        }
+//             message.className =
+//                 "status error";
+//         }
 
-    }
+//     }
 
-    catch(error){
+//     catch(error){
 
-        console.error(error);
+//         console.error(error);
 
-        loader.style.display = "none";
+//         loader.style.display = "none";
 
-        message.innerHTML =
-            "❌ Network/server error";
+//         message.innerHTML =
+//             "❌ Network/server error";
 
-        message.className =
-            "status error";
-    }
-}
+//         message.className =
+//             "status error";
+//     }
+// }
 
 // =========================
 // 🚀 INIT

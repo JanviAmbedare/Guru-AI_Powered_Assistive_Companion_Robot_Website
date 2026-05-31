@@ -57,7 +57,13 @@ class Settings:
     # HUGGING FACE (AI) CONFIG
     # =========================
     HF_TOKEN = os.getenv("HF_TOKEN")
-
+    # =========================
+    # AI SERVICE CONFIG (Backend ↔ AI Service)
+    # =========================
+    AI_SERVICE_URL = os.getenv(
+    "AI_SERVICE_URL",
+    "http://localhost:8001"
+)
     # =========================
     # AI MODEL CONFIG
     # =========================

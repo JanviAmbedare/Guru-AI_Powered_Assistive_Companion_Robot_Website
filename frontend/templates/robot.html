@@ -61,13 +61,45 @@ button{
 .emergency{
     background:#ef4444;
 }
+.emergency-btn{
 
+    background:#dc2626;
+    color:white;
+
+    border:none;
+
+    padding:12px 20px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    transition:0.3s;
+}
+
+.emergency-btn:hover{
+
+    background:#b91c1c;
+
+    transform:scale(1.05);
+}
 </style>
 </head>
 <body>
 
 <h1>🤖 Robot Operating Console</h1>
+<div style="text-align:right;margin-bottom:20px;">
 
+    <button
+        id="emergencyBtn"
+        class="emergency-btn"
+    >
+        🚨 Emergency Stop
+    </button>
+
+</div>
 <div class="grid">
 
 <div class="card">
@@ -77,20 +109,44 @@ button{
     <div class="status">
 
         <div class="status-box">
-            🔋 Battery: 87%
-        </div>
+    🔋 Battery:
+    <span id="batteryLevel">
+        Loading...
+    </span>
+</div>
 
         <div class="status-box">
-            🌡 CPU: 56°C
-        </div>
+    🌡 CPU:
+    <span id="cpuTemp">
+        Loading...
+    </span>
+</div>
 
         <div class="status-box">
-            🎤 Mic: Active
-        </div>
-
+    🎤 Microphone:
+    <span id="micStatus">
+        Loading...
+    </span>
+</div>
         <div class="status-box">
-            📷 Camera: Online
-        </div>
+    📷 Camera:
+    <span id="cameraStatus">
+        Loading...
+    </span>
+</div>
+<div class="status-box">
+    📍 Location:
+    <span id="robotLocation">
+        Unknown
+    </span>
+</div>
+
+<div class="status-box">
+    🚧 Obstacle:
+    <span id="obstacleStatus">
+        Unknown
+    </span>
+</div>
 
     </div>
 
@@ -104,19 +160,26 @@ button{
 
         <div></div>
 
-        <button>⬆</button>
+        <button id="forwardBtn">
+    ⬆
+</button>
 
         <div></div>
 
-        <button>⬅</button>
+       <button id="leftBtn">⬅</button>
 
-        <button class="emergency">🛑</button>
+        <button
+    class="emergency"
+    id="stopBtn"
+>
+    🛑
+</button>
 
-        <button>➡</button>
+        <button id="rightBtn">➡</button>
 
         <div></div>
 
-        <button>⬇</button>
+       <button id="backwardBtn">⬇</button>
 
         <div></div>
 
@@ -125,7 +188,25 @@ button{
 </div>
 
 </div>
+<script>
+const emergencyBtn =
+    document.getElementById(
+        "emergencyBtn"
+    );
 
+if(emergencyBtn){
+
+    emergencyBtn.addEventListener(
+        "click",
+        () => {
+
+            sendEmergencyAlert();
+
+        }
+    );
+}
+</script>
+<script src="/static/js/robot.js"></script>
 </body>
 <!-- CONFIG -->
 <script src="{{ url_for('static', filename='js/config.js') }}"></script>

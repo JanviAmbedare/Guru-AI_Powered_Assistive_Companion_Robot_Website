@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 # from models.model_manager import ModelManager
+from routes import training_routes
 from routes import (
     registration_routes,
     dashboard_routes,
@@ -13,7 +14,8 @@ from routes import (
     notification_routes,
     alert_routes,
     chat_routes,
-    health_routes
+    health_routes,
+    training_routes
 )
 from routes.analytics_socket import (
     router as analytics_socket_router
@@ -76,7 +78,11 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5000",
+        "http://127.0.0.1:5000",
+        "https://guru-ai-powered-assistive-companion-q2v0.onrender.com"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -101,7 +107,9 @@ app.include_router(reminder_routes.router)
 
 app.include_router(profile_routes.router)
 
-
+app.include_router(
+    training_routes.router
+)
 
 app.include_router(chat_routes.router)
 

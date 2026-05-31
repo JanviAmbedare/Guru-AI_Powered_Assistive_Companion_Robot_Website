@@ -1,7 +1,3 @@
-import {
-    uploadVoiceData
-}
-from "../services/api_services.js";
 const mic =
     document.getElementById("mic");
 
@@ -71,12 +67,23 @@ async function recordSample(){
 
             samples.push(audioBlob);
 
+            await saveVoice(audioBlob);
+
             updateUI();
 
             // AUTO UPLOAD
             if(samples.length >= MAX_SAMPLES){
 
-                uploadVoices();
+                sessionStorage.setItem(
+                    "voiceCount",
+                    samples.length
+                );
+
+                window.voiceSamples =
+                    samples;
+
+                window.location.href =
+                    `/registration-complete/${USER_ID}`;
             }
 
         };
@@ -133,74 +140,74 @@ function updateUI(){
 // ☁️ UPLOAD VOICE DATA
 // =========================
 
-async function uploadVoices(){
+// async function uploadVoices(){
 
-    statusText.innerHTML =
-        "☁️ Uploading voice samples...";
+//     statusText.innerHTML =
+//         "☁️ Uploading voice samples...";
 
-    const formData = new FormData();
+//     const formData = new FormData();
 
-    samples.forEach((blob, index) => {
+//     samples.forEach((blob, index) => {
 
-        formData.append(
-            "files",
-            blob,
-            `voice_${index}.webm`
-        );
+//         formData.append(
+//             "files",
+//             blob,
+//             `voice_${index}.webm`
+//         );
 
-    });
+//     });
 
-    // IMPORTANT
-    formData.append(
-        "media_role",
-        "raw"
-    );
+//     // IMPORTANT
+//     formData.append(
+//         "media_role",
+//         "raw"
+//     );
 
-    try{
+//     try{
 
-        const result =
-            await uploadVoiceData(
-                USER_ID,
-                formData
-            );
+//         const result =
+//             await uploadVoiceData(
+//                 USER_ID,
+//                 formData
+//             );
 
-        console.log(result);
+//         console.log(result);
 
-        if(result.status === "success"){
+//         if(result.status === "success"){
 
-            statusText.innerHTML =
-                "✅ Voice registration completed";
+//             statusText.innerHTML =
+//                 "✅ Voice registration completed";
 
-            statusText.className =
-                "success";
+//             statusText.className =
+//                 "success";
 
-            setTimeout(() => {
+//             setTimeout(() => {
 
-                window.location.href = "/";
+//                 window.location.href = "/";
 
-            }, 2000);
+//             }, 2000);
 
-        }
+//         }
 
-        else{
+//         else{
 
-            statusText.innerHTML =
-                "❌ Upload failed";
+//             statusText.innerHTML =
+//                 "❌ Upload failed";
 
-            statusText.className =
-                "error";
-        }
+//             statusText.className =
+//                 "error";
+//         }
 
-    }
+//     }
 
-    catch(error){
+//     catch(error){
 
-        console.error(error);
+//         console.error(error);
 
-        statusText.innerHTML =
-            "❌ Network/server error";
+//         statusText.innerHTML =
+//             "❌ Network/server error";
 
-        statusText.className =
-            "error";
-    }
-}
+//         statusText.className =
+//             "error";
+//     }
+// }

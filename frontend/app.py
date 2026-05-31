@@ -184,7 +184,8 @@ def login():
             session["token"] = response["access_token"]
             session["user_id"] = response["user_id"]
             session["role"] = response["role"]
-
+            session["username"] = data["name"]
+            
             resp = make_response(
                 redirect("/")
             )
@@ -264,6 +265,7 @@ def signup():
         session["role"] = (
             login_result["role"]
         )
+        session["username"] = data["name"]
         return redirect(
             f"/capture-face/{user_id}"
         )
@@ -289,61 +291,61 @@ def capture_face(user_id):
 # 📸 FACE REGISTER API
 # =========================
 
-@app.route(
-    "/register/face/<int:user_id>",
-    methods=["POST"]
-)
-@login_required
-def register_face(user_id):
+# @app.route(
+#     "/register/face/<int:user_id>",
+#     methods=["POST"]
+# )
+# @login_required
+# def register_face(user_id):
 
-    try:
+#     try:
 
-        files = request.files.getlist("files")
+#         files = request.files.getlist("files")
 
-        media_role = request.form.get(
-            "media_role",
-            "raw"
-        )
+#         media_role = request.form.get(
+#             "media_role",
+#             "raw"
+#         )
 
-        result = upload_face_samples(
+#         result = upload_face_samples(
 
-            user_id=user_id,
+#             user_id=user_id,
 
-            files=[
-                (
-                    "files",
-                    (
-                        file.filename,
-                        file.stream,
-                        file.mimetype
-                    )
-                )
-                for file in files
-            ],
+#             files=[
+#                 (
+#                     "files",
+#                     (
+#                         file.filename,
+#                         file.stream,
+#                         file.mimetype
+#                     )
+#                 )
+#                 for file in files
+#             ],
 
-            media_role=media_role,
+#             media_role=media_role,
 
-            token=session["token"]
-        )
+#             token=session["token"]
+#         )
 
-        return jsonify(result)
+#         return jsonify(result)
 
-    except Exception as e:
+#     except Exception as e:
 
-        print(
-            "FACE REGISTER ERROR:",
-            str(e)
-        )
+#         print(
+#             "FACE REGISTER ERROR:",
+#             str(e)
+#         )
 
-        traceback.print_exc()
+#         traceback.print_exc()
 
-        return jsonify({
+#         return jsonify({
 
-            "status": "error",
+#             "status": "error",
 
-            "message": str(e)
+#             "message": str(e)
 
-        }), 500
+#         }), 500
 # =========================
 # 🎤 VOICE PAGE
 # =========================
@@ -361,40 +363,102 @@ def capture_voice(user_id):
 # 🎤 VOICE REGISTER API
 # =========================
 
+# @app.route(
+#     "/register/voice/<int:user_id>",
+#     methods=["POST"]
+# )
+# @login_required
+# def register_voice(user_id):
+
+#     try:
+
+#         files = request.files.getlist("files")
+
+#         media_role = request.form.get(
+#             "media_role",
+#             "raw"
+#         )
+
+#         result = upload_voice_samples(
+
+#             user_id=user_id,
+
+#             files=[
+#                 (
+#                     "files",
+#                     (
+#                         file.filename,
+#                         file.stream,
+#                         file.mimetype
+#                     )
+#                 )
+#                 for file in files
+#             ],
+
+#             media_role=media_role,
+
+#             token=session["token"]
+#         )
+
+#         return jsonify(result)
+
+#     except Exception as e:
+
+#         print(
+#             "VOICE REGISTER ERROR:",
+#             str(e)
+#         )
+
+#         traceback.print_exc()
+
+#         return jsonify({
+
+#             "status": "error",
+
+#             "message": str(e)
+
+#         }), 500
+
+# =========================
+# ✅ REGISTRATION COMPLETE
+# =========================
 @app.route(
-    "/register/voice/<int:user_id>",
+    "/registration-complete/<int:user_id>"
+)
+@login_required
+def registration_complete(
+    user_id
+):
+
+    return render_template(
+        "registration_full.html",
+        user_id=user_id
+    )
+
+# =========================
+# 🗝️ AUTO LOGIN (FACE/VOICE)
+# =========================
+@app.route(
+    "/upload-media/<int:user_id>",
     methods=["POST"]
 )
 @login_required
-def register_voice(user_id):
+def upload_media(user_id):
 
     try:
 
-        files = request.files.getlist("files")
-
-        media_role = request.form.get(
-            "media_role",
-            "raw"
+        face_files = request.files.getlist(
+            "face_files"
         )
 
-        result = upload_voice_samples(
+        voice_files = request.files.getlist(
+            "voice_files"
+        )
 
+        result = upload_all_media(
             user_id=user_id,
-
-            files=[
-                (
-                    "files",
-                    (
-                        file.filename,
-                        file.stream,
-                        file.mimetype
-                    )
-                )
-                for file in files
-            ],
-
-            media_role=media_role,
-
+            face_files=face_files,
+            voice_files=voice_files,
             token=session["token"]
         )
 
@@ -402,20 +466,48 @@ def register_voice(user_id):
 
     except Exception as e:
 
-        print(
-            "VOICE REGISTER ERROR:",
-            str(e)
-        )
-
-        traceback.print_exc()
-
         return jsonify({
-
             "status": "error",
-
             "message": str(e)
-
         }), 500
+
+# =========================
+# 🚪 TRAIN FACE MODEL
+# =========================
+@app.route(
+    "/train-face/<int:user_id>",
+    methods=["POST"]
+)
+@login_required
+def train_face_route(
+    user_id
+):
+
+    result = train_face_model(
+        user_id,
+        session["token"]
+    )
+
+    return jsonify(result)
+
+# =========================
+# 🚪 TRAIN VOICE MODEL
+# =========================
+@app.route(
+    "/train-voice/<int:user_id>",
+    methods=["POST"]
+)
+@login_required
+def train_voice_route(
+    user_id
+):
+
+    result = train_voice_model(
+        user_id,
+        session["token"]
+    )
+
+    return jsonify(result)
 
 # =========================
 # 🏠 DASHBOARD
@@ -436,24 +528,9 @@ def dashboard():
 # 💬 CHAT
 # =========================
 
-@app.route("/chat", methods=["GET", "POST"])
+@app.route("/chat")
 @login_required
 def chat():
-
-    user_id = session["user_id"]
-
-    if request.method == "POST":
-
-        message = request.form["message"]
-
-        safe_api_call(
-            send_chat,
-            {
-                "user_id": user_id,
-                "text": message
-            },
-            session["token"]
-        )
 
     conversations = safe_api_call(
         get_chat,
@@ -628,92 +705,6 @@ def reminders(user_id):
         user_id=user_id
     )
 
-
-# =========================
-# ➕ CREATE REMINDER
-# =========================
-
-@app.route(
-    "/create-reminder",
-    methods=["POST"]
-)
-@login_required
-def create_reminder_route():
-
-    data = request.json
-
-    result = safe_api_call(
-        create_reminder,
-        data,
-        session["token"]
-    )
-
-    return jsonify(result)
-
-
-# =========================
-# ✅ DONE
-# =========================
-
-@app.route(
-    "/complete-reminder/<int:reminder_id>",
-    methods=["PUT"]
-)
-@login_required
-def complete_reminder(
-    reminder_id
-):
-
-    result = safe_api_call(
-        mark_reminder_done,
-        session["user_id"],
-        reminder_id,
-        session["token"]
-    )
-
-    return jsonify(result)
-
-
-# =========================
-# 🗑 DELETE
-# =========================
-
-@app.route(
-    "/delete-reminder/<int:reminder_id>",
-    methods=["DELETE"]
-)
-@login_required
-def delete_reminder_route(
-    reminder_id
-):
-
-    result = safe_api_call(
-        delete_reminder,
-        session["user_id"],
-        reminder_id,
-        session["token"]
-    )
-
-    return jsonify(result)
-
-# =========================
-# 👤 PROFILE
-# =========================
-
-@app.route("/profile/<int:user_id>", methods=["GET"])
-@login_required
-def profile(user_id):
-
-    profile_data = safe_api_call(
-        get_profile,
-        user_id,
-        session["token"]
-    )
-
-    return render_template(
-        "profile.html",
-        profile=profile_data
-    )
 
 
 # =========================

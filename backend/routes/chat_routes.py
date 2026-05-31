@@ -1,18 +1,15 @@
 from fastapi import APIRouter, Depends
 from models.schemas import ChatRequest
 from utils.dependencies import get_current_user
-from services.logging_service import LoggingService
 
-import requests
+from services.ai_client import AIClient
+from services.logging_service import LoggingService
 
 router = APIRouter(
     prefix="/chat",
     tags=["AI Chat"]
 )
 
-AI_SERVICE_URL = (
-    "https://guru-ai-service.onrender.com/chat"
-)
 
 @router.post("/")
 def chat(
@@ -27,15 +24,10 @@ def chat(
             "message": "Unauthorized"
         }
 
-    response = requests.post(
-        AI_SERVICE_URL,
-        json={
-            "user_id": data.user_id,
-            "message": data.text
-        }
+    result = AIClient.chat(
+        user_id=data.user_id,
+        message=data.text
     )
-
-    result = response.json()
 
     LoggingService.info(
         f"Chat message from user {data.user_id}"
@@ -43,7 +35,16 @@ def chat(
 
     return {
         "status": "success",
-        "response": result["response"],
-        "intent": result["intent"],
-        "sentiment": result["sentiment"]
+        "response": result.get(
+            "response",
+            ""
+        ),
+        "intent": result.get(
+            "intent",
+            "unknown"
+        ),
+        "sentiment": result.get(
+            "sentiment",
+            "neutral"
+        )
     }

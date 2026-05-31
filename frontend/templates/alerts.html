@@ -148,7 +148,22 @@ href="/static/css/alerts.css">
 
 const USER_ID = {{ user_id }};
 
+const emergencyBtn =
+    document.getElementById(
+        "emergencyBtn"
+    );
 
+if(emergencyBtn){
+
+    emergencyBtn.addEventListener(
+        "click",
+        () => {
+
+            sendEmergencyAlert();
+
+        }
+    );
+}
 </script>
 <script src="{{ url_for('static', filename='js/config.js') }}"></script>
 <script src="{{ url_for('static', filename='js/api.js') }}"></script>

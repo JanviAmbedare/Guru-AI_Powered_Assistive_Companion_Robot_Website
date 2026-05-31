@@ -1,39 +1,80 @@
 import requests
+import os
+
+AI_SERVICE_URL = os.getenv("AI_SERVICE_URL")
 
 
 class AIClient:
 
-
-    BASE_URL = (
-        "http://localhost:9000"
-    )
-
+    API_PREFIX = "/api"
 
     @staticmethod
-    def generate_face_embeddings(
-        user_id
-    ):
+    def chat(user_id: int, message: str):
 
-        return requests.post(
-
-            f"{AIClient.BASE_URL}/face/train",
-
+        response = requests.post(
+            f"{AI_SERVICE_URL}{AIClient.API_PREFIX}/chat",
             json={
-                "user_id": user_id
-            }
-        ).json()
+                "user_id": user_id,
+                "message": message
+            },
+            timeout=60
+        )
 
-
+        response.raise_for_status()
+        return response.json()
     @staticmethod
-    def generate_voice_embeddings(
-        user_id
-    ):
+    def get_training_status(user_id):
 
-        return requests.post(
+        response = requests.get(
+            f"{AI_SERVICE_URL}/api/training/status/{user_id}",
+            timeout=30
+        )
 
-            f"{AIClient.BASE_URL}/voice/train",
+        response.raise_for_status()
 
-            json={
-                "user_id": user_id
-            }
-        ).json()
+        return response.json()
+    # @staticmethod
+    # def verify_face(file):
+
+    #     response = requests.post(
+    #         f"{AI_SERVICE_URL}{AIClient.API_PREFIX}/face/verify",
+    #         files={"file": file},
+    #         timeout=60
+    #     )
+
+    #     response.raise_for_status()
+    #     return response.json()
+
+    # @staticmethod
+    # def verify_voice(file):
+
+    #     response = requests.post(
+    #         f"{AI_SERVICE_URL}{AIClient.API_PREFIX}/voice/verify",
+    #         files={"file": file},
+    #         timeout=60
+    #     )
+
+    #     response.raise_for_status()
+    #     return response.json()
+
+    # @staticmethod
+    # def train_face(user_id):
+
+    #     response = requests.post(
+    #         f"{AI_SERVICE_URL}{AIClient.API_PREFIX}/training/face/{user_id}",
+    #         timeout=300
+    #     )
+
+    #     response.raise_for_status()
+    #     return response.json()
+
+    # @staticmethod
+    # def train_voice(user_id):
+
+    #     response = requests.post(
+    #         f"{AI_SERVICE_URL}{AIClient.API_PREFIX}/training/voice/{user_id}",
+    #         timeout=300
+    #     )
+
+    #     response.raise_for_status()
+    #     return response.json()

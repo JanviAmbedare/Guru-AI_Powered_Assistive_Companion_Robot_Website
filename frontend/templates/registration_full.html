@@ -97,18 +97,95 @@ h1{
 
 <div class="card">
 
-    <h2>🤖 AI Training</h2>
+    <h2>☁️ Media Upload</h2>
 
     <p>
-        Generate embeddings & models
+        Upload all biometric samples
+        to Cloudinary
     </p>
 
-    <div class="status">
+    <div
+        class="status"
+        id="uploadStatus"
+    >
+        ⏳ Pending
+    </div>
+
+    <button
+        class="btn"
+        id="uploadBtn"
+    >
+        Upload Media
+    </button>
+
+</div>
+<div class="card">
+
+    <h2>📸 Face Upload</h2>
+
+    <div
+        class="status"
+        id="faceUploadStatus"
+    >
         ⏳ Pending
     </div>
 
 </div>
 
+<div class="card">
+
+    <h2>🎤 Voice Upload</h2>
+
+    <div
+        class="status"
+        id="voiceUploadStatus"
+    >
+        ⏳ Pending
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2>📸 Face Training</h2>
+
+    <div
+        class="status"
+        id="faceTrainStatus"
+    >
+        ⏳ Pending
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2>🎤 Voice Training</h2>
+
+    <div
+        class="status"
+        id="voiceTrainStatus"
+    >
+        ⏳ Pending
+    </div>
+
+</div>
+<div
+    style="
+        text-align:center;
+        margin-top:40px;
+    "
+>
+
+    <button
+        class="btn"
+        id="continueBtn"
+        disabled
+    >
+        Open Dashboard
+    </button>
+
+</div>
 </div>
 
 </div>
@@ -117,6 +194,10 @@ h1{
 
 <!-- API ENGINE -->
 <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+
+<script src="/static/js/indexeddb.js"></script>
+
+<script src="/static/js/registration_full.js"></script>
 
 </body>
 </html>

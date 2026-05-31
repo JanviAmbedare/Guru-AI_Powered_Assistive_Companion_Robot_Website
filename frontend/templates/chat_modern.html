@@ -236,7 +236,9 @@ body{
 
     <div class="logo">🤖 GURU AI</div>
 
-    <button class="new-chat">
+    <button
+    id="newChatBtn"
+    class="new-chat">
         + New Chat
     </button>
 
@@ -338,7 +340,7 @@ body{
     <!-- INPUT -->
     <div class="input-area">
 
-        <form method="POST" class="input-form">
+        <form    id="chatForm"    class="input-form">
 
             <input
                 type="text"
@@ -371,40 +373,14 @@ chatContainer.scrollTop = chatContainer.scrollHeight;
 
 </script>
 <script>
-
-const socket = new WebSocket(
-    "ws://localhost:8000/ws/chat/1"
-);
-
-socket.onmessage = (event) => {
-
-    const data = JSON.parse(event.data);
-
-    appendBotMessage(
-        data.response
-    );
-};
-
-function sendMessage(){
-
-    const input = document.getElementById(
-        "messageInput"
-    );
-
-    socket.send(input.value);
-
-    appendUserMessage(input.value);
-
-    input.value = "";
-}
-
+const USER_ID = "{{ session.user_id }}";
 </script>
 <!-- CONFIG -->
 <script src="{{ url_for('static', filename='js/config.js') }}"></script>
 
 <!-- API ENGINE -->
 <script src="{{ url_for('static', filename='js/api.js') }}"></script>
-
+<script src="/static/js/chat.js"></script>
 <script src="/static/js/notifications.js"></script>
 
 <script src="/static/js/alerts.js"></script>

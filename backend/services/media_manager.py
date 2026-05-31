@@ -364,3 +364,44 @@ class MediaManager:
             )
 
         return uploaded_files
+
+    @staticmethod
+    def get_media_status(user_id: int):
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT
+                media_category,
+                COUNT(*) as total
+            FROM media_files
+            WHERE user_id=%s
+            AND is_active=1
+            GROUP BY media_category
+        """, (user_id,))
+
+        rows = cursor.fetchall()
+
+        face_count = 0
+        voice_count = 0
+
+        for row in rows:
+
+            category = row["media_category"].lower()
+
+            if category == "face":
+                face_count = row["total"]
+
+            elif category == "voice":
+                voice_count = row["total"]
+
+        cursor.close()
+        conn.close()
+
+        return {
+            "face_uploaded": face_count > 0,
+            "voice_uploaded": voice_count > 0,
+            "face_count": face_count,
+            "voice_count": voice_count
+        }

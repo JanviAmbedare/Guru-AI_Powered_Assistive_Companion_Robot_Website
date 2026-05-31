@@ -18,7 +18,12 @@ href="/static/css/reminders.css">
         <h1>
             ⏰ Smart Reminders
         </h1>
-
+        <button
+            id="emergencyBtn"
+            class="emergency-btn"
+        >
+            🚨 Emergency
+        </button>
         <button onclick="openModal()">
             + Add Reminder
         </button>
@@ -51,22 +56,25 @@ href="/static/css/reminders.css">
             <div class="actions">
 
                 <button
-                onclick="completeReminder(
+                    onclick="completeReminder(
                     {{ r.reminder_id }}
-                )">
+                    )">
+                        ✅ Done
+                    </button>
 
-                    ✅ Done
-
-                </button>
-
-                <button
-                onclick="deleteReminder(
+                    <button
+                    onclick="snoozeReminder(
                     {{ r.reminder_id }}
-                )">
+                    )">
+                        ⏰ Snooze
+                    </button>
 
-                    🗑 Delete
-
-                </button>
+                    <button
+                    onclick="deleteReminder(
+                    {{ r.reminder_id }}
+                    )">
+                        🗑 Delete
+                    </button>
 
             </div>
 
@@ -172,7 +180,22 @@ href="/static/css/reminders.css">
 <script>
 
 const USER_ID = {{ user_id }};
+const emergencyBtn =
+    document.getElementById(
+        "emergencyBtn"
+    );
 
+if(emergencyBtn){
+
+    emergencyBtn.addEventListener(
+        "click",
+        () => {
+
+            sendEmergencyAlert();
+
+        }
+    );
+}
 </script>
 <!-- CONFIG -->
 <script src="{{ url_for('static', filename='js/config.js') }}"></script>

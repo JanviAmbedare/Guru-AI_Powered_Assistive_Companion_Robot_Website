@@ -25,4 +25,4 @@ async function subscribePush(userId) {
   });
 }
 </script>
-<button onclick="subscribePush(1)">Enable Notifications</button>
+<button onclick="subscribePush({{ session.user_id }})">Subscribe to Notifications</button>

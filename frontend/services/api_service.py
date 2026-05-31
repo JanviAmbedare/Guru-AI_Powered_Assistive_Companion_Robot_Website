@@ -327,8 +327,19 @@ def get_alerts(
         f"/alerts/{user_id}",
         token=token
     )
+#  =====================================================
+# 📁 MEDIA APIs
+# =====================================================
+def get_media_status(
+    user_id,
+    token
+):
 
-
+    return api_request(
+        "GET",
+        f"/api/media/status/{user_id}",
+        token=token
+    )
 def send_emergency_alert(
     user_id,
     message,
@@ -446,36 +457,123 @@ def send_robot_command(
 # 📸 FACE APIs
 # =====================================================
 
-def upload_face_samples(
-    user_id,
-    files,
-    media_role,
-    token
-):
+# def upload_face_samples(
+#     user_id,
+#     files,
+#     media_role,
+#     token
+# ):
 
-    return api_request(
+#     return api_request(
 
-        "POST",
+#         "POST",
 
-        f"/api/media/register/face/{user_id}",
+#         f"/api/media/register/face/{user_id}",
 
-        token=token,
+#         token=token,
 
-        files=files,
+#         files=files,
 
-        data={
-            "media_role":
-                media_role
-        }
-    )
+#         data={
+#             "media_role":
+#                 media_role
+#         }
+#     )
 # =====================================================
 # 🎤 VOICE APIs
 # =====================================================
 
-def upload_voice_samples(
+# def upload_voice_samples(
+#     user_id,
+#     files,
+#     media_role,
+#     token
+# ):
+
+#     return api_request(
+
+#         "POST",
+
+#         f"/api/media/register/voice/{user_id}",
+
+#         token=token,
+
+#         files=files,
+
+#         data={
+#             "media_role":
+#                 media_role
+#         }
+#     )
+
+# =====================================================
+# 📁 MEDIA APIs
+# =====================================================
+def upload_all_media(
     user_id,
-    files,
-    media_role,
+    face_files,
+    voice_files,
+    token
+):
+
+    files = []
+
+    for file in face_files:
+
+        files.append(
+            (
+                "face_files",
+                (
+                    file.filename,
+                    file.stream,
+                    file.mimetype
+                )
+            )
+        )
+
+    for file in voice_files:
+
+        files.append(
+            (
+                "voice_files",
+                (
+                    file.filename,
+                    file.stream,
+                    file.mimetype
+                )
+            )
+        )
+
+    return api_request(
+
+        "POST",
+
+        f"/api/media/upload-all/{user_id}",
+
+        token=token,
+
+        files=files
+    )
+
+# =====================================================
+# 🧠 TRAINING STATUS
+# =====================================================
+def get_training_status(
+    user_id,
+    token
+):
+
+    return api_request(
+        "GET",
+        f"/training/status/{user_id}",
+        token=token
+    )
+
+# =====================================================
+# 🧠 AI TRAINING APIs
+# =====================================================
+def train_face_model(
+    user_id,
     token
 ):
 
@@ -483,16 +581,26 @@ def upload_voice_samples(
 
         "POST",
 
-        f"/api/media/register/voice/{user_id}",
+        f"/training/face/{user_id}",
 
-        token=token,
+        token=token
+    )
 
-        files=files,
+# =====================================================
+# 🎤 VOICE MODEL TRAINING
+# =====================================================
+def train_voice_model(
+    user_id,
+    token
+):
 
-        data={
-            "media_role":
-                media_role
-        }
+    return api_request(
+
+        "POST",
+
+        f"/training/voice/{user_id}",
+
+        token=token
     )
 
 # =====================================================

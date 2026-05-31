@@ -7,6 +7,19 @@ router = APIRouter(
     tags=["Robot"]
 )
 
+@router.get("/status/{robot_id}")
+def robot_status(robot_id: int):
+
+    return RobotService.get_status(
+        robot_id
+    )
+
+@router.get("/telemetry/{robot_id}")
+def robot_telemetry(robot_id: int):
+
+    return RobotService.get_telemetry(
+        robot_id
+    )
 
 @router.post("/move-forward")
 def move_forward(

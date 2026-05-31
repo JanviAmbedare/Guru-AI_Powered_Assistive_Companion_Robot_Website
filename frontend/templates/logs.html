@@ -53,7 +53,17 @@ h1{
 </head>
 <body>
 
-<h1>📊 AI Activity Logs</h1>
+<div class="topbar">
+
+    <h1>
+        📊 AI Activity Logs
+    </h1>
+
+    <a href="/">
+        ← Dashboard
+    </a>
+
+</div>
 
 <table class="table">
 
@@ -64,18 +74,8 @@ h1{
     <th>Status</th>
 </tr>
 
-{% for log in logs %}
-<tr>
-    <td>{{ log.user_text }}</td>
-    <td>{{ log.intent }}</td>
-    <td>{{ log.response }}</td>
-    <td>
-        <span class="badge success">
-            Active
-        </span>
-    </td>
-</tr>
-{% endfor %}
+<tbody id="logsTableBody">
+</tbody>
 
 </table>
 

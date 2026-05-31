@@ -136,3 +136,27 @@ body{
     }
 
 }
+.emergency-btn{
+
+    background:#dc2626;
+    color:white;
+
+    border:none;
+
+    padding:12px 20px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    transition:0.3s;
+}
+
+.emergency-btn:hover{
+
+    background:#b91c1c;
+
+    transform:scale(1.05);
+}
