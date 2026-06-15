@@ -1,4 +1,9 @@
-const uploadBtn =
+const USER_ID =
+    window.location.pathname
+    .split("/")
+    .pop();
+
+    const uploadBtn =
     document.getElementById(
         "uploadBtn"
     );

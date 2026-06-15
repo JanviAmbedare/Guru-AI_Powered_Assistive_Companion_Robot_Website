@@ -534,7 +534,7 @@ def chat():
 
     conversations = safe_api_call(
         get_chat,
-        user_id,
+        session["user_id"],
         session["token"]
     )
 
@@ -542,7 +542,6 @@ def chat():
         "chat_modern.html",
         conversations=conversations
     )
-
 
 # =========================
 # 🧠 MEMORY
