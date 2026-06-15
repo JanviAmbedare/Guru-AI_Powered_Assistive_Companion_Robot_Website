@@ -54,8 +54,7 @@ def api_request(
 
         print("\n=========================")
         print(f"🌐 {method} {url}")
-        print("📡 STATUS:",
-              response.status_code)
+        print("📡 STATUS:", response.status_code)
 
         # =========================
         # ✅ JSON RESPONSE
@@ -414,12 +413,12 @@ def alert_analytics(
 # =====================================================
 
 def get_robot_status(
+    robot_id,
     token
 ):
-
     return api_request(
         "GET",
-        "/robot/status",
+        f"/robot/status/{robot_id}",
         token=token
     )
 

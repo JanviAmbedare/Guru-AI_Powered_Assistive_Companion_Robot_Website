@@ -522,7 +522,15 @@ def dashboard():
         role=session["role"],
         user_id=session["user_id"]
     )
+@app.route("/api/profile")
+@login_required
+def profile_api():
 
+    return jsonify({
+        "user_id": session["user_id"],
+        "name": session["username"],
+        "role": session["role"]
+    })
 
 # =========================
 # 💬 CHAT
@@ -572,8 +580,13 @@ def memory(user_id):
 @role_required("OWNER")
 def robot():
 
+    robot = get_user_robot(
+    session["user_id"]
+    )
+
     status = safe_api_call(
         get_robot_status,
+        robot["robot_id"],
         session["token"]
     )
 
@@ -624,14 +637,19 @@ def alerts(user_id):
 @login_required
 def trigger_emergency():
 
-    data = request.json
+    data = request.get_json() or {}
+
+    message = data.get(
+            "message",
+            "Emergency assistance required"
+        )
 
     result = safe_api_call(
-        send_emergency_alert,
-        session["user_id"],
-        data["message"],
-        session["token"]
-    )
+            send_emergency_alert,
+            session["user_id"],
+            message,
+            session["token"]
+        )
 
     return jsonify(result)
 

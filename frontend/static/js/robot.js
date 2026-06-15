@@ -11,10 +11,18 @@ try{
             `/robot/status/${ROBOT_ID}`
         );
 
+    if(!robot || robot.status === "error"){
+
     document.getElementById(
         "batteryLevel"
-    ).innerText =
-        `${status.battery_level}%`;
+    ).innerText = "Offline";
+
+    document.getElementById(
+        "cpuTemp"
+    ).innerText = "Offline";
+
+    return;
+    }
 
     document.getElementById(
         "cpuTemp"

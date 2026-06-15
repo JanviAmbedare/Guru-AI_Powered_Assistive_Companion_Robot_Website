@@ -430,24 +430,26 @@ def alert_analytics(
 # =====================================================
 
 def get_robot_status(
+    robot_id,
     token
 ):
 
     return api_request(
         "GET",
-        "/robot/status",
+        f"/robot/status/{robot_id}",
         token=token
     )
 
 
 def send_robot_command(
+    robot_id,
     data,
     token
 ):
 
     return api_request(
         "POST",
-        "/robot/command",
+        f"/robot/command/{robot_id}",
         token=token,
         data=data
     )

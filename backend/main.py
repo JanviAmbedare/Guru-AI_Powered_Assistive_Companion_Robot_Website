@@ -27,12 +27,7 @@ from services.reminder_scheduler import (
     ReminderScheduler
 )
 
-scheduler_thread = threading.Thread(
-    target=ReminderScheduler.start,
-    daemon=True
-)
 
-scheduler_thread.start()
 
 from services.logging_service import (
     LoggingService
@@ -187,7 +182,13 @@ async def global_exception_handler(
         }
     )
 
-# @app.on_event("startup")
-# async def startup_event():
+@app.on_event("startup")
+async def startup_event():
+    threading.Thread(
+    target=ReminderScheduler.start,
+    daemon=True
+    ).start()
 
-#     ModelManager.load_models()
+    print(
+        "Reminder Scheduler Started"
+    )

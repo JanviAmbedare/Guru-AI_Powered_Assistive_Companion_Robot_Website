@@ -36,7 +36,8 @@ async function sendEmergencyAlert(
         const response =
             await apiRequest(
                 "POST",
-                "/alerts/emergency",
+                "/trigger-emergency",
+                token,
                 null,
                 {
                     user_id: USER_ID,

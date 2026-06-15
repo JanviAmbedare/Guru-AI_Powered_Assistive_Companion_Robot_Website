@@ -82,7 +82,7 @@ function updateCounters(
         "conversationCount"
     ).innerText =
         analytics.total_interactions || 0;
-
+    
     document.getElementById(
         "batteryLevel"
     ).innerText =

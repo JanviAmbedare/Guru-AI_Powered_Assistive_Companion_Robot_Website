@@ -555,7 +555,26 @@ body{
                 </div>
 
                 <hr>
+                <button
+                    class="profile-action"
+                    onclick="window.location.href='/capture-face/{{ session.user_id }}'"
+                    >
+                    📸 Re-upload Face
+                    </button>
 
+                    <button
+                    class="profile-action"
+                    onclick="window.location.href='/capture-voice/{{ session.user_id }}'"
+                    >
+                    🎤 Re-upload Voice
+                    </button>
+
+                    <button
+                    class="profile-action"
+                    onclick="window.location.href='/registration-complete/{{ session.user_id }}'"
+                    >
+                    ☁️ Re-upload Media
+                    </button>
                 <button
                     class="profile-action"
                     onclick="retrainModels()"

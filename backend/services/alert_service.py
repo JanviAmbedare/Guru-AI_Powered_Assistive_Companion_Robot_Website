@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from backend.services.notification_service import NotificationService
 from database.db_utils import execute_query
 from services.whatsapp_service import WhatsAppService
 from services.logging_service import (LoggingService)
@@ -125,7 +126,27 @@ class AlertService:
             severity="CRITICAL",
             source="AI_SYSTEM"
         )
+        user = execute_query(
+        """
+        SELECT phone_number
+        FROM users
+        WHERE id=%s
+        """,
+        (user_id,),
+        fetch_one=True,
+        dictionary=True
+        )
 
+        phone = None
+
+        if user:
+            phone = user.get("phone_number")
+
+        NotificationService.send_all(
+            whatsapp_to=phone,
+            title="GURU Emergency Alert",
+            message=message
+        )
         try:
 
             RobotService.speak(
