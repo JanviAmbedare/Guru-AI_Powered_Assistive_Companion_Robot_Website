@@ -32,17 +32,17 @@ async function loadProfile(){
 
             apiRequest(
                 "GET",
-                `/api/profile/${USER_ID}`
+                `/profile/${USER_ID}`
             ),
 
             apiRequest(
                 "GET",
-                `/api/media/status/${USER_ID}`
+                `/media/status/${USER_ID}`
             ),
 
             apiRequest(
                 "GET",
-                `/api/training/status/${USER_ID}`
+                `/training/status/${USER_ID}`
             )
         ]);
 
@@ -83,7 +83,7 @@ async function retrainModels(){
 
         await apiRequest(
             "POST",
-            `/api/profile/${USER_ID}/retrain`
+            `/profile/${USER_ID}/retrain`
         );
 
         alert(

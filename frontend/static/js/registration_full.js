@@ -81,8 +81,19 @@ async function uploadMedia() {
             response.status
         );
 
-        const data =
-            await response.json();
+        if (!response.ok) {
+
+            const text = await response.text();
+
+            console.error(
+                "SERVER ERROR:",
+                text
+            );
+
+            return;
+        }
+
+        const data = await response.json();
 
         if(data.status === "success") {
 
@@ -133,8 +144,19 @@ async function loadMediaStatus() {
             return;
         }
 
-        const data =
-            await response.json();
+        if (!response.ok) {
+
+            const text = await response.text();
+
+            console.error(
+                "SERVER ERROR:",
+                text
+            );
+
+            return;
+        }
+
+        const data = await response.json();
 
         console.log(
             "Media Status:",
@@ -184,8 +206,19 @@ async function loadTrainingStatus(){
                 `${API_BASE_URL}/training/status/${USER_ID}`
             );
 
-        const data =
-            await response.json();
+        if (!response.ok) {
+
+            const text = await response.text();
+
+            console.error(
+                "SERVER ERROR:",
+                text
+            );
+
+            return;
+        }
+
+        const data = await response.json();
         
         const faceProgress =
             data.face_progress || 0;

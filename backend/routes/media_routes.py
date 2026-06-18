@@ -44,10 +44,10 @@ async def upload_face(
 
         traceback.print_exc()
         
-        raise HTTPException(
-                status_code=500,
-                detail=str(e)
-            )
+        return {
+            "status": "error",
+            "message": str(e)
+        }
 
 
 # =========================
@@ -83,10 +83,10 @@ async def upload_voice(
 
         print(e)
 
-        raise HTTPException(
-            status_code=500,
-            detail=str(e)
-        )
+        return {
+            "status": "error",
+            "message": str(e)
+        }
 
 @router.get("/status/{user_id}")
 def media_status(user_id: int):
