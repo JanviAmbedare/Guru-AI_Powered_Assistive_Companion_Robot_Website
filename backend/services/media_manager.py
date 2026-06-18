@@ -1,4 +1,3 @@
-import os
 import uuid
 
 from dotenv import load_dotenv
@@ -18,102 +17,97 @@ load_dotenv()
 class MediaManager:
 
 
-    BASE_STORAGE = os.getenv(
-        "GURU_STORAGE_PATH"
-    )
+    # # =====================================
+    # # CREATE STORAGE DIRECTORY
+    # # =====================================
+
+    # @staticmethod
+    # def get_storage_path(
+    #     media_category,
+    #     media_role
+    # ):
+
+    #     return os.path.join(
+
+    #         MediaManager.BASE_STORAGE,
+
+    #         media_category,
+
+    #         media_role
+    #     )
 
 
-    # =====================================
-    # CREATE STORAGE DIRECTORY
-    # =====================================
+    # # =====================================
+    # # SAVE LOCAL FILE
+    # # =====================================
 
-    @staticmethod
-    def get_storage_path(
-        media_category,
-        media_role
-    ):
+    # @staticmethod
+    # def save_local_file(
+    #     file,
+    #     media_category,
+    #     media_role
+    # ):
 
-        return os.path.join(
+    #     extension = (
+    #         file.filename.split(".")[-1]
+    #     )
 
-            MediaManager.BASE_STORAGE,
+    #     unique_name = (
+    #         f"{uuid.uuid4()}.{extension}"
+    #     )
 
-            media_category,
+    #     save_dir = (
+    #         MediaManager.get_storage_path(
+    #             media_category,
+    #             media_role
+    #         )
+    #     )
 
-            media_role
-        )
+    #     os.makedirs(
+    #         save_dir,
+    #         exist_ok=True
+    #     )
 
+    #     local_path = os.path.join(
+    #         save_dir,
+    #         unique_name
+    #     )
 
-    # =====================================
-    # SAVE LOCAL FILE
-    # =====================================
+    #     with open(local_path, "wb") as buffer:
+    #         buffer.write(file.file.read())
 
-    @staticmethod
-    def save_local_file(
-        file,
-        media_category,
-        media_role
-    ):
-
-        extension = (
-            file.filename.split(".")[-1]
-        )
-
-        unique_name = (
-            f"{uuid.uuid4()}.{extension}"
-        )
-
-        save_dir = (
-            MediaManager.get_storage_path(
-                media_category,
-                media_role
-            )
-        )
-
-        os.makedirs(
-            save_dir,
-            exist_ok=True
-        )
-
-        local_path = os.path.join(
-            save_dir,
-            unique_name
-        )
-
-        with open(local_path, "wb") as buffer:
-            buffer.write(file.file.read())
-
-        return (
-            local_path,
-            unique_name
-        )
+    #     return (
+    #         local_path,
+    #         unique_name
+    #     )
 
 
-    # =====================================
-    # CLOUDINARY UPLOAD
-    # =====================================
+    # # =====================================
+    # # CLOUDINARY UPLOAD
+    # # =====================================
 
-    @staticmethod
-    def upload_cloudinary(
-        local_path,
-        media_category
-    ):
+    # @staticmethod
+    # def upload_cloudinary(
+    #     local_path,
+    #     media_category
+    # ):
 
-        folder = f"guru/{media_category}"
+    #     folder = f"guru/{media_category}"
 
-        resource_type = (
-            "image"
-            if media_category == "faces"
-            else "video"
-        )
+    #     resource_type = (
+    #         "image"
+    #         if media_category == "faces"
+    #         else "video"
+    #     )
 
-        return CloudinaryService.upload_file(
+    #     return CloudinaryService.upload_file(
 
-            file_path=local_path,
+    #         file_path=local_path,
 
-            folder=folder,
+    #         folder=folder,
 
-            resource_type=resource_type
-        )
+    #         resource_type=resource_type
+    #     )
 
 
     # =====================================
@@ -201,28 +195,14 @@ class MediaManager:
         for file in files:
 
             # LOCAL SAVE
-            local_path, file_name = (
-
-                MediaManager.save_local_file(
-
-                    file=file,
-
-                    media_category="faces",
-
-                    media_role=media_role
-                )
-            )
+            file_name = file.filename
 
             # CLOUDINARY UPLOAD
-            cloud_result = (
-
-                MediaManager.upload_cloudinary(
-
-                    local_path=local_path,
-
-                    media_category="faces"
-                )
-            )
+            cloud_result = CloudinaryService.upload_file(
+            file=file.file,
+            folder="guru/faces",
+            resource_type="image"
+        )
 
             # DATABASE RECORD
             MediaManager.save_media_record({
@@ -239,7 +219,7 @@ class MediaManager:
                     file_name,
 
                 "local_path":
-                    local_path,
+                    None,  # No local path since we're directly uploading to Cloudinary
 
                 "cloudinary_url":
                     cloud_result["secure_url"],
@@ -248,9 +228,7 @@ class MediaManager:
                     cloud_result["public_id"],
 
                 "file_size":
-                    os.path.getsize(
-                        local_path
-                    ),
+                    0, # We can optionally fetch the file size from Cloudinary if needed
 
                 "mime_type":
                     file.mimetype,
@@ -262,7 +240,7 @@ class MediaManager:
             uploaded_files.append({
 
                 "local_path":
-                    local_path,
+                    None,
 
                 "cloudinary_url":
                     cloud_result["secure_url"]
@@ -305,27 +283,13 @@ class MediaManager:
         for file in files:
 
             # LOCAL SAVE
-            local_path, file_name = (
-
-                MediaManager.save_local_file(
-
-                    file=file,
-
-                    media_category="voices",
-
-                    media_role=media_role
-                )
-            )
+            file_name = file.filename
 
             # CLOUDINARY UPLOAD
-            cloud_result = (
-
-                MediaManager.upload_cloudinary(
-
-                    local_path=local_path,
-
-                    media_category="voices"
-                )
+            cloud_result = CloudinaryService.upload_file(
+            file=file.file,
+            folder="guru/voices",
+            resource_type="video"
             )
 
             # DATABASE RECORD
@@ -343,7 +307,7 @@ class MediaManager:
                     file_name,
 
                 "local_path":
-                    local_path,
+                    None,
 
                 "cloudinary_url":
                     cloud_result["secure_url"],
@@ -352,9 +316,7 @@ class MediaManager:
                     cloud_result["public_id"],
 
                 "file_size":
-                    os.path.getsize(
-                        local_path
-                    ),
+                    0,
 
                 "mime_type":
                     file.mimetype,

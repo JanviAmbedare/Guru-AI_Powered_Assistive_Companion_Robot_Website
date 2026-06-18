@@ -6,14 +6,14 @@ class CloudinaryService:
 
     @staticmethod
     def upload_file(
-        file_path,
+        file,
         folder,
         resource_type="auto"
     ):
 
         result = cloudinary.uploader.upload(
 
-            file_path,
+            file.file,
 
             folder=folder,
 

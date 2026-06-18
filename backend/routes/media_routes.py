@@ -93,15 +93,22 @@ def media_status(user_id: int):
     )
 
     return {
-        "face_uploaded":
-            media["face_uploaded"],
 
-        "voice_uploaded":
-            media["voice_uploaded"],
+    "face_uploaded":
+        media["face"]["uploaded"] > 0,
 
-        "face_count":
-            media["face_count"],
+    "voice_uploaded":
+        media["voice"]["uploaded"] > 0,
 
-        "voice_count":
-            media["voice_count"]
-    }
+    "face_count":
+        media["face"]["total"],
+
+    "voice_count":
+        media["voice"]["total"],
+
+    "face":
+        media["face"],
+
+    "voice":
+        media["voice"]
+}
