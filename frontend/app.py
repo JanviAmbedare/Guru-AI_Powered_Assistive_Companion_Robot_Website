@@ -444,7 +444,7 @@ def registration_complete(
 )
 @login_required
 def upload_media(user_id):
-    print("UPLOAD MEDIA CALLED")
+    # print("UPLOAD MEDIA CALLED")
     try:
 
         raw_face_files = request.files.getlist(
@@ -484,15 +484,12 @@ def upload_media(user_id):
                     )
                 )
             )
-        print(
-            "FACE FILES FORMAT:",
-            face_files[:1]
+        
+        clear_user_media(
+            user_id
         )
-
-        print(
-            "VOICE FILES FORMAT:",
-            voice_files[:1]
-        )
+        
+        
         face_result = {}
 
         if face_files:

@@ -116,3 +116,13 @@ def media_status(user_id: int):
         "voice":
             media["voice"]
     }
+
+@router.delete("/media/user/{user_id}")
+def clear_user_media(user_id: int):
+
+    MediaManager.clear_user_media(user_id)
+
+    return {
+        "status": "success",
+        "message": "Old media removed"
+    }

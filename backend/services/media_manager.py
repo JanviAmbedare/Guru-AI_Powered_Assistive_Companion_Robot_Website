@@ -500,3 +500,54 @@ class MediaManager:
                         voice_training
                 }
             }
+    @staticmethod
+    def clear_user_media(user_id: int):
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT public_id,
+                media_category
+            FROM media_files
+            WHERE user_id=%s
+        """, (user_id,))
+
+        files = cursor.fetchall()
+
+        for file in files:
+
+            try:
+
+                if file["public_id"]:
+
+                    if file["media_category"] == "voices":
+
+                        cloudinary.uploader.destroy(
+                            file["public_id"],
+                            resource_type="video"
+                        )
+
+                    else:
+
+                        cloudinary.uploader.destroy(
+                            file["public_id"]
+                        )
+
+            except Exception as e:
+
+                print(
+                    f"Cloudinary delete error: {e}"
+                )
+
+        cursor.execute("""
+            DELETE FROM media_files
+            WHERE user_id=%s
+        """, (user_id,))
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return True

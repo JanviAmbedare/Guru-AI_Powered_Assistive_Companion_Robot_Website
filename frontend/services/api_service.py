@@ -508,6 +508,14 @@ def upload_voice_samples(
         }
     )
 
+# =====================================================
+#  CLEAR USER MEDIA
+# =====================================================
+def clear_user_media(user_id):
+
+    return requests.delete(
+        f"/media/user/{user_id}"
+    )
 
 # =====================================================
 # 🧠 TRAINING STATUS
