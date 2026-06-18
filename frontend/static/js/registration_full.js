@@ -84,10 +84,17 @@ async function uploadMedia() {
         const data =
             await response.json();
 
-        console.log(
-            "UPLOAD RESPONSE:",
-            data
-        );
+        faceUploaded =
+            data.face_uploaded;
+
+        voiceUploaded =
+            data.voice_uploaded;
+
+        faceCount =
+            data.face_count;
+
+        voiceCount =
+            data.voice_count;
 
         if(data.status === "success") {
 
@@ -119,7 +126,7 @@ async function loadMediaStatus() {
 
     const response =
         await fetch(
-            `${API_BASE_URL}/api/media/status/${USER_ID}`
+            `${API_BASE_URL}/status/${USER_ID}`
         );
 
     const data =

@@ -37,7 +37,7 @@ async function loadProfile(){
 
             apiRequest(
                 "GET",
-                `/api/media/status/${USER_ID}`
+                `/status/${USER_ID}`
             ),
 
             apiRequest(

@@ -111,11 +111,10 @@ class QueueService:
 
         total_files = row["total_files"]
 
-        percentage = int(
-            (
-                processed_files /
-                total_files
-            ) * 100
+        percentage = (
+            int((processed_files / total_files) * 100)
+            if total_files > 0
+            else 0
         )
 
         cursor.execute(
@@ -136,6 +135,33 @@ class QueueService:
                 processed_files,
                 current_file,
                 percentage,
+                user_id,
+                job_type
+            )
+        )
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+        
+    @staticmethod
+    def mark_completed(
+        user_id,
+        job_type
+    ):
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            UPDATE model_training_queue
+            SET status='completed'
+            WHERE user_id=%s
+            AND type=%s
+            AND status IN ('pending', 'uploading', 'training')
+            """,
+            (
                 user_id,
                 job_type
             )

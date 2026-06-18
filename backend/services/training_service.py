@@ -24,11 +24,17 @@ class TrainingService:
         face_status = "pending"
         voice_status = "pending"
 
-        face_started = None
-        face_completed = None
+        face_progress = 0
+        voice_progress = 0
 
-        voice_started = None
-        voice_completed = None
+        face_current_file = None
+        voice_current_file = None
+
+        face_total_files = 0
+        voice_total_files = 0
+
+        face_processed_files = 0
+        voice_processed_files = 0
 
         for row in rows:
 

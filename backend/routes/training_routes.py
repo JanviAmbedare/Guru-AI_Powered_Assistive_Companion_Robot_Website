@@ -4,11 +4,10 @@ from services.training_service import (
 )
 
 router = APIRouter(
-    prefix="/training",
     tags=["Training"]
 )
 
-@router.get("/status/{user_id}")
+@router.get("/training/status/{user_id}")
 def get_training_status(
     user_id: int
 ):

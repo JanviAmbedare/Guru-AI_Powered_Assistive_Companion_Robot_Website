@@ -26,7 +26,7 @@ class AIClient:
     def get_training_status(user_id):
 
         response = requests.get(
-            f"{AI_SERVICE_URL}/api/training/status/{user_id}",
+            f"{AI_SERVICE_URL}/training/status/{user_id}",
             timeout=30
         )
 

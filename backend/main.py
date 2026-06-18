@@ -76,7 +76,9 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5000",
         "http://127.0.0.1:5000",
-        "https://guru-ai-powered-assistive-companion-q2v0.onrender.com"
+        "https://guru-ai-powered-assistive-companion-q2v0.onrender.com",
+        "https://guru-ai-powered-assistive-companion-kpna.onrender.com"
+
     ],
     allow_credentials=True,
     allow_methods=["*"],

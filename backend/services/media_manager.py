@@ -180,31 +180,39 @@ class MediaManager:
     # =====================================
 
     @staticmethod
-    def process_face_files(user_id,files,media_role,upload_source="frontend"):
+    def process_face_files(
+        user_id,
+        files,
+        media_role,
+        upload_source="frontend"
+    ):
 
-        
-        
         uploaded_files = []
-        processed = 0
-        # Add face processing job to queue
+
         QueueService.add_job(
-                        user_id=user_id,
-                        job_type="face",
-                        total_files=len(files)
-                    )
-        for file in files:
-
-            # LOCAL SAVE
-            file_name = file.filename
-
-            # CLOUDINARY UPLOAD
-            cloud_result = CloudinaryService.upload_file(
-            file=file.file,
-            folder="guru/faces",
-            resource_type="image"
+            user_id=user_id,
+            job_type="face",
+            total_files=len(files)
         )
 
-            # DATABASE RECORD
+        processed = 0
+
+        for file in files:
+
+            print("=" * 50)
+            print("FACE FILE:", file.filename)
+            print("TYPE:", type(file))
+            print("CONTENT:", file.content_type)
+            print("=" * 50)
+
+            cloud_result = (
+                CloudinaryService.upload_file(
+                    file=file,
+                    folder="guru/faces",
+                    resource_type="image"
+                )
+            )
+
             MediaManager.save_media_record({
 
                 "user_id": user_id,
@@ -216,10 +224,10 @@ class MediaManager:
                     media_role,
 
                 "file_name":
-                    file_name,
+                    file.filename,
 
                 "local_path":
-                    None,  # No local path since we're directly uploading to Cloudinary
+                    None,
 
                 "cloudinary_url":
                     cloud_result["secure_url"],
@@ -228,10 +236,10 @@ class MediaManager:
                     cloud_result["public_id"],
 
                 "file_size":
-                    0, # We can optionally fetch the file size from Cloudinary if needed
+                    0,
 
                 "mime_type":
-                    file.mimetype,
+                    file.content_type,
 
                 "upload_source":
                     upload_source
@@ -239,23 +247,30 @@ class MediaManager:
 
             uploaded_files.append({
 
-                "local_path":
-                    None,
-
                 "cloudinary_url":
-                    cloud_result["secure_url"]
+                    cloud_result["secure_url"],
+
+                "public_id":
+                    cloud_result["public_id"]
             })
-            
-            # Update progress in queue
+
             processed += 1
 
             QueueService.update_progress(
+
                 user_id=user_id,
+
                 job_type="face",
+
                 current_file=file.filename,
+
                 processed_files=processed
             )
-            
+        QueueService.mark_completed(
+            user_id=user_id,
+            job_type="face"
+        )
+        
         return uploaded_files
 
 
@@ -272,27 +287,34 @@ class MediaManager:
     ):
 
         uploaded_files = []
-        processed = 0
 
         QueueService.add_job(
+
             user_id=user_id,
+
             job_type="voice",
+
             total_files=len(files)
         )
 
+        processed = 0
+
         for file in files:
 
-            # LOCAL SAVE
-            file_name = file.filename
+            print("=" * 50)
+            print("VOICE FILE:", file.filename)
+            print("TYPE:", type(file))
+            print("CONTENT:", file.content_type)
+            print("=" * 50)
 
-            # CLOUDINARY UPLOAD
-            cloud_result = CloudinaryService.upload_file(
-            file=file.file,
-            folder="guru/voices",
-            resource_type="video"
+            cloud_result = (
+                CloudinaryService.upload_file(
+                    file=file,
+                    folder="guru/voices",
+                    resource_type="video"
+                )
             )
 
-            # DATABASE RECORD
             MediaManager.save_media_record({
 
                 "user_id": user_id,
@@ -304,7 +326,7 @@ class MediaManager:
                     media_role,
 
                 "file_name":
-                    file_name,
+                    file.filename,
 
                 "local_path":
                     None,
@@ -319,7 +341,7 @@ class MediaManager:
                     0,
 
                 "mime_type":
-                    file.mimetype,
+                    file.content_type,
 
                 "upload_source":
                     upload_source
@@ -327,21 +349,30 @@ class MediaManager:
 
             uploaded_files.append({
 
-                "local_path":
-                    local_path,
-
                 "cloudinary_url":
-                    cloud_result["secure_url"]
+                    cloud_result["secure_url"],
+
+                "public_id":
+                    cloud_result["public_id"]
             })
+
             processed += 1
 
             QueueService.update_progress(
+
                 user_id=user_id,
+
                 job_type="voice",
+
                 current_file=file.filename,
+
                 processed_files=processed
             )
-            
+
+        QueueService.mark_completed(
+            user_id=user_id,
+            job_type="voice"
+        )
 
         return uploaded_files
 

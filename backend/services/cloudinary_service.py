@@ -3,7 +3,6 @@ import cloudinary.uploader
 
 class CloudinaryService:
 
-
     @staticmethod
     def upload_file(
         file,
@@ -11,19 +10,47 @@ class CloudinaryService:
         resource_type="auto"
     ):
 
-        result = cloudinary.uploader.upload(
+        try:
 
-            file.file,
+            # FastAPI UploadFile
+            if hasattr(file, "file"):
 
-            folder=folder,
+                file.file.seek(0)
 
-            resource_type=resource_type
-        )
+                return cloudinary.uploader.upload(
 
-        return result
+                    file.file,
+
+                    folder=folder,
+
+                    resource_type=resource_type
+                )
+
+            # File-like object
+            file.seek(0)
+
+            return cloudinary.uploader.upload(
+
+                file,
+
+                folder=folder,
+
+                resource_type=resource_type
+            )
+
+        except Exception as e:
+
+            print(
+                "CLOUDINARY UPLOAD ERROR:",
+                str(e)
+            )
+
+            raise
 
     @staticmethod
-    def delete_file(public_id):
+    def delete_file(
+        public_id
+    ):
 
         return cloudinary.uploader.destroy(
             public_id

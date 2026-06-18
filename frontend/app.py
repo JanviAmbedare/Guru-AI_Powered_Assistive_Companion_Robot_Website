@@ -462,10 +462,10 @@ def upload_media(user_id):
             face_files.append(
                 (
                     "files",
-                    (
+                    (   
                         file.filename,
-                        file.stream,
-                        file.mimetype
+                        file,
+                        file.content_type
                     )
                 )
             )
@@ -479,8 +479,8 @@ def upload_media(user_id):
                     "files",
                     (
                         file.filename,
-                        file.stream,
-                        file.mimetype
+                        file,
+                        file.content_type
                     )
                 )
             )

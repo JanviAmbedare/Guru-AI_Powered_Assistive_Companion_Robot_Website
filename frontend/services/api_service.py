@@ -337,7 +337,7 @@ def get_media_status(
 
     return api_request(
         "GET",
-        f"/api/media/status/{user_id}",
+        f"/status/{user_id}",
         token=token
     )
 def send_emergency_alert(
