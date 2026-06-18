@@ -16,7 +16,7 @@ router = APIRouter()
 # FACE UPLOAD
 # =========================
 
-@router.post("/media/register/face/{user_id}")
+@router.post("/register/face/{user_id}")
 async def upload_face(
     user_id: int,
     files: List[UploadFile] = File(...),
@@ -54,7 +54,7 @@ async def upload_face(
 # VOICE UPLOAD
 # =========================
 
-@router.post("/media/register/voice/{user_id}")
+@router.post("/register/voice/{user_id}")
 async def upload_voice(
     user_id: int,
     files: List[UploadFile] = File(...),
@@ -88,7 +88,7 @@ async def upload_voice(
             detail=str(e)
         )
 
-@router.get("/media/status/{user_id}")
+@router.get("/status/{user_id}")
 def media_status(user_id: int):
 
     media = MediaManager.get_media_status(
