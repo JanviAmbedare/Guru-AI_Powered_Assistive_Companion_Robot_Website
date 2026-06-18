@@ -16,13 +16,14 @@ router = APIRouter()
 # FACE UPLOAD
 # =========================
 
-@router.post("/register/face/{user_id}")
+@router.post("/media/register/face/{user_id}")
 async def upload_face(
     user_id: int,
     files: List[UploadFile] = File(...),
     media_role: str = Form("raw")
 ):
-
+    print("FACE ROUTE HIT")
+    print("FILES RECEIVED =", len(files))
     try:
 
         uploaded_urls = (
@@ -32,7 +33,7 @@ async def upload_face(
                 media_role=media_role
             )
         )
-
+        # print("CLOUDINARY URL =", uploaded_urls[0] if uploaded_urls else None)
         return {
             "status": "success",
             "uploaded": len(uploaded_urls),
@@ -53,13 +54,14 @@ async def upload_face(
 # VOICE UPLOAD
 # =========================
 
-@router.post("/register/voice/{user_id}")
+@router.post("/media/register/voice/{user_id}")
 async def upload_voice(
     user_id: int,
     files: List[UploadFile] = File(...),
     media_role: str = Form("raw")
 ):
-
+    print("VOICE ROUTE HIT")
+    print("FILES RECEIVED =", len(files))
     try:
 
         uploaded_urls = (
@@ -69,6 +71,7 @@ async def upload_voice(
                 media_role=media_role
             )
         )
+        # print("CLOUDINARY URL =", cloudinary_url)
 
         return {
             "status": "success",
@@ -84,18 +87,8 @@ async def upload_voice(
             status_code=500,
             detail=str(e)
         )
-# print("MEDIA ROUTES FILE LOADED")
-# @router.get("/status/{user_id}")
-# def media_status(user_id: int):
 
-#     print("TEST ROUTE HIT")
-
-#     return {
-#         "debug": True,
-#         "user_id": user_id
-#     }
-
-@router.get("/status/{user_id}")
+@router.get("/media/status/{user_id}")
 def media_status(user_id: int):
 
     media = MediaManager.get_media_status(

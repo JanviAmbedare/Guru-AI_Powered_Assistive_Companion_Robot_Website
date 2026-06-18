@@ -116,7 +116,7 @@ class MediaManager:
 
     @staticmethod
     def save_media_record(data):
-
+        print("SAVING MEDIA RECORD TO DB")
         connection = (
             get_db_connection()
         )
@@ -163,12 +163,12 @@ class MediaManager:
 
             data["upload_source"]
         )
-
+        print("EXECUTING QUERY:")
         cursor.execute(
             query,
             values
         )
-
+        print("QUERY EXECUTED, COMMITTING")
         connection.commit()
 
         cursor.close()
@@ -186,7 +186,7 @@ class MediaManager:
         media_role,
         upload_source="frontend"
     ):
-
+        print("PROCESS FACE FILES START")
         uploaded_files = []
 
         QueueService.add_job(
@@ -196,14 +196,8 @@ class MediaManager:
         )
 
         processed = 0
-
+        print("FILES RECEIVED =", len(files))
         for file in files:
-
-            print("=" * 50)
-            print("FACE FILE:", file.filename)
-            print("TYPE:", type(file))
-            print("CONTENT:", file.content_type)
-            print("=" * 50)
 
             cloud_result = (
                 CloudinaryService.upload_file(
@@ -212,7 +206,7 @@ class MediaManager:
                     resource_type="image"
                 )
             )
-
+            print("CLOUDINARY URL =", cloud_result["secure_url"])
             MediaManager.save_media_record({
 
                 "user_id": user_id,
@@ -253,7 +247,7 @@ class MediaManager:
                 "public_id":
                     cloud_result["public_id"]
             })
-
+            print("UPLOADED FILE =", uploaded_files[-1])
             processed += 1
 
             QueueService.update_progress(
@@ -270,7 +264,7 @@ class MediaManager:
             user_id=user_id,
             job_type="face"
         )
-        
+        print("PROCESS FACE FILES END")
         return uploaded_files
 
 
@@ -285,7 +279,7 @@ class MediaManager:
         media_role,
         upload_source="frontend"
     ):
-
+        print("PROCESS VOICE FILES START")
         uploaded_files = []
 
         QueueService.add_job(
@@ -314,7 +308,9 @@ class MediaManager:
                     resource_type="video"
                 )
             )
+            print("CLOUDINARY URL =", cloud_result["secure_url"])
 
+            print("INSERTING DB RECORD")
             MediaManager.save_media_record({
 
                 "user_id": user_id,
@@ -373,7 +369,7 @@ class MediaManager:
             user_id=user_id,
             job_type="voice"
         )
-
+        print("PROCESS VOICE FILES END")
         return uploaded_files
 
     @staticmethod

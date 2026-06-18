@@ -470,7 +470,7 @@ def upload_face_samples(
 
         "POST",
 
-        f"/register/face/{user_id}",
+        f"/media/register/face/{user_id}",
 
         token=token,
 
@@ -496,7 +496,7 @@ def upload_voice_samples(
 
         "POST",
 
-        f"/register/voice/{user_id}",
+        f"/media/register/voice/{user_id}",
 
         token=token,
 
