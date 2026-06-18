@@ -444,25 +444,80 @@ def registration_complete(
 )
 @login_required
 def upload_media(user_id):
-
+    print("UPLOAD MEDIA CALLED")
     try:
 
-        face_files = request.files.getlist(
+        raw_face_files = request.files.getlist(
             "face_files"
         )
 
-        voice_files = request.files.getlist(
+        raw_voice_files = request.files.getlist(
             "voice_files"
         )
 
-        result = upload_all_media(
-            user_id=user_id,
-            face_files=face_files,
-            voice_files=voice_files,
-            token=session["token"]
+        face_files = []
+
+        for file in raw_face_files:
+
+            face_files.append(
+                (
+                    "files",
+                    (
+                        file.filename,
+                        file.stream,
+                        file.mimetype
+                    )
+                )
+            )
+
+        voice_files = []
+
+        for file in raw_voice_files:
+
+            voice_files.append(
+                (
+                    "files",
+                    (
+                        file.filename,
+                        file.stream,
+                        file.mimetype
+                    )
+                )
+            )
+        print(
+            "FACE FILES FORMAT:",
+            face_files[:1]
         )
 
-        return jsonify(result)
+        print(
+            "VOICE FILES FORMAT:",
+            voice_files[:1]
+        )
+        face_result = {}
+
+        if face_files:
+            face_result = upload_face_samples(
+                user_id=user_id,
+                files=face_files,
+                media_role="raw",
+                token=session["token"]
+            )
+
+        voice_result = {}
+
+        if voice_files:
+            voice_result = upload_voice_samples(
+                user_id=user_id,
+                files=voice_files,
+                media_role="raw",
+                token=session["token"]
+            )
+
+        return jsonify({
+            "status": "success",
+            "face": face_result,
+            "voice": voice_result
+        })
 
     except Exception as e:
 
@@ -580,13 +635,9 @@ def memory(user_id):
 @role_required("OWNER")
 def robot():
 
-    robot = get_user_robot(
-    session["user_id"]
-    )
-
     status = safe_api_call(
         get_robot_status,
-        robot["robot_id"],
+        1,
         session["token"]
     )
 

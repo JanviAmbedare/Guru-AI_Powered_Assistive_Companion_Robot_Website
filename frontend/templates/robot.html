@@ -206,7 +206,7 @@ if(emergencyBtn){
     );
 }
 </script>
-<script src="/static/js/robot.js"></script>
+
 </body>
 <!-- CONFIG -->
 <script src="{{ url_for('static', filename='js/config.js') }}"></script>
@@ -215,6 +215,7 @@ if(emergencyBtn){
 <script src="{{ url_for('static', filename='js/api.js') }}"></script>
 <script>
 const USER_ID = {{ session.user_id }};
+
 </script>
 <script src="/static/js/notifications.js"></script>
 <script src="/static/js/robot.js"></script>

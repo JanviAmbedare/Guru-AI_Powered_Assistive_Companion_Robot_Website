@@ -18,7 +18,42 @@ let samples = [];
 
 const MAX_SAMPLES = 15;
 
+const voicePrompt =
+    document.getElementById("voicePrompt");
 
+const SAMPLE_PHRASES = [
+
+    "Hello Guru, how are you today?",
+
+    "Please remind me to take my medicine at 8 PM.",
+
+    "What is the weather forecast for today?",
+
+    "Set an alarm for six o'clock tomorrow morning.",
+
+    "Call my emergency contact if I need help.",
+
+    "Open my daily schedule and read it aloud.",
+
+    "I would like to listen to some relaxing music.",
+
+    "Please tell me the current time and date.",
+
+    "Navigate me safely to the living room.",
+
+    "Turn on the lights in my bedroom.",
+
+    "Read my latest notifications and messages.",
+
+    "Start a video call with my family members.",
+
+    "Help me find my glasses and water bottle.",
+
+    "Thank you Guru for assisting me every day.",
+
+    "My voice is being registered for secure authentication."
+
+];
 // =========================
 // 🎤 RECORD SAMPLE
 // =========================
@@ -68,7 +103,7 @@ async function recordSample(){
             samples.push(audioBlob);
 
             await saveVoice(audioBlob);
-
+            updatePrompt();
             updateUI();
 
             // AUTO UPLOAD
@@ -132,10 +167,33 @@ function updateUI(){
 
     statusText.innerHTML =
         `✅ Sample ${samples.length} recorded`;
-
+    updatePrompt();
 }
 
+// =========================
+// 🔄 UPDATE PROMPT
+// =========================
+function updatePrompt(){
 
+    if(samples.length < SAMPLE_PHRASES.length){
+
+        voicePrompt.innerHTML =
+            SAMPLE_PHRASES[samples.length];
+
+    }
+    else{
+
+        voicePrompt.innerHTML =
+            "✅ All voice samples collected";
+
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    updatePrompt();
+
+});
 // =========================
 // ☁️ UPLOAD VOICE DATA
 // =========================

@@ -178,8 +178,6 @@ href="/static/css/reminders.css">
 </div>
 
 <script>
-
-const USER_ID = {{ user_id }};
 const emergencyBtn =
     document.getElementById(
         "emergencyBtn"
@@ -199,7 +197,9 @@ if(emergencyBtn){
 </script>
 <!-- CONFIG -->
 <script src="{{ url_for('static', filename='js/config.js') }}"></script>
-
+<script>
+    const USER_ID = {{ user_id }};
+</script>
 <!-- API ENGINE -->
 <script src="{{ url_for('static', filename='js/api.js') }}"></script>
 

@@ -1,9 +1,4 @@
-const USER_ID =
-    window.location.pathname
-    .split("/")
-    .pop();
-
-    const uploadBtn =
+const uploadBtn =
     document.getElementById(
         "uploadBtn"
     );
@@ -24,7 +19,7 @@ uploadBtn.addEventListener(
 );
 
 async function uploadMedia() {
-
+    console.log("UPLOAD FUNCTION STARTED");
     const faces =
         await getFaces();
 
@@ -56,34 +51,68 @@ async function uploadMedia() {
         }
     );
 
+    uploadBtn.disabled = true;
+
+    uploadBtn.innerHTML =
+        "Uploading...";
+
     uploadStatus.innerHTML =
-        "☁️ Uploading...";
+        "☁️ Uploading Media";
+    
+    
+    try {
+        console.log("Faces Count:", faces.length);
+        console.log("Voices Count:", voices.length);
+        console.log(
+                "Calling:",
+                `/upload-media/${USER_ID}`
+            );
+        const response =
+            await fetch(
+                `/upload-media/${USER_ID}`,
+                {
+                    method:"POST",
+                    body:formData
+                }
+            );
 
-    const response =
-        await fetch(
-
-            `${API_BASE_URL}/upload-media/${USER_ID}`,
-
-            {
-                method:"POST",
-                body:formData
-            }
+        console.log(
+            "UPLOAD STATUS:",
+            response.status
         );
 
-    const data =
-        await response.json();
+        const data =
+            await response.json();
 
-    if(data.status === "success") {
+        console.log(
+            "UPLOAD RESPONSE:",
+            data
+        );
 
-    uploadStatus.innerHTML =
-        "✅ Uploaded";
+        if(data.status === "success") {
 
-    await clearMedia();
+            uploadStatus.innerHTML =
+                "✅ Uploaded";
 
-    await loadMediaStatus();
+            uploadBtn.innerHTML =
+                "Upload Complete";
 
-    await loadTrainingStatus();
-}
+            uploadBtn.disabled = true;
+
+            await clearMedia();
+
+            await loadMediaStatus();
+
+            await loadTrainingStatus();
+        }
+    }
+    catch(error){
+        console.log("An error occurred while uploading media.");
+        console.error(
+            "UPLOAD ERROR:",
+            error
+        );
+    }
 }
 
 async function loadMediaStatus() {
@@ -95,22 +124,23 @@ async function loadMediaStatus() {
 
     const data =
         await response.json();
+    console.log("Media Status:", data);
 
     document.getElementById(
-        "faceUploadStatus"
-    ).innerText =
+    "faceUploadStatus"
+        ).innerText =
         data.face_uploaded
-        ? `✅ ${data.face_count} uploaded`
-        : "❌ Not uploaded";
+            ? `✅ ${data.face_count} Uploaded`
+            : "⌛ Pending";
+
 
     document.getElementById(
-        "voiceUploadStatus"
-    ).innerText =
+            "voiceUploadStatus"
+        ).innerText =
         data.voice_uploaded
-        ? `✅ ${data.voice_count} uploaded`
-        : "❌ Not uploaded";
-}
-
+            ? `✅ ${data.voice_count} Uploaded`
+            : "⌛ Pending";
+    }
 
 async function loadTrainingStatus(){
 
@@ -123,24 +153,110 @@ async function loadTrainingStatus(){
 
         const data =
             await response.json();
+        
+        const faceProgress =
+            data.face_progress || 0;
+
+        document.getElementById(
+            "faceUploadPercentage"
+        ).innerText =
+            `${faceProgress}%`;
+
+        document.getElementById(
+            "faceProgressFill"
+        ).style.width =
+            `${faceProgress}%`;
+
+        document.getElementById(
+            "faceCurrentUploadFile"
+        ).innerText =
+            data.face_current_file ||
+            "Waiting...";
+
+        const voiceProgress =
+            data.voice_progress || 0;
+
+        document.getElementById(
+            "voiceUploadPercentage"
+        ).innerText =
+            `${voiceProgress}%`;
+
+        document.getElementById(
+            "voiceProgressFill"
+        ).style.width =
+            `${voiceProgress}%`;
+
+        document.getElementById(
+            "voiceCurrentUploadFile"
+        ).innerText =
+            data.voice_current_file ||
+            "Waiting...";
+
+
 
         document.getElementById(
             "faceTrainStatus"
         ).innerText =
-            data.face_status;
+
+        `${data.face_status}
+        (${data.face_processed_files}/${data.face_total_files})`;
+
 
         document.getElementById(
             "voiceTrainStatus"
         ).innerText =
-            data.voice_status;
-            if(
-                data.face_status === "completed" &&
-                data.voice_status === "completed"
-                ){
-                    continueBtn.disabled = false;
-                }
-            }
 
+        `${data.voice_status}
+        (${data.voice_processed_files}/${data.voice_total_files})`;
+            
+        const workflow =
+            document.getElementById(
+                "workflowStatus"
+            );
+
+        if (
+            faceProgress < 100 ||
+            voiceProgress < 100
+        ){
+
+            workflow.innerHTML = `
+                ✅ Face Capture
+                <br>
+                ✅ Voice Capture
+                <br>
+                ⏳ Uploading Media
+                <br>
+                ⭕ Training Pending
+            `;
+        }
+        else if(
+            data.face_status !== "completed" ||
+            data.voice_status !== "completed"
+        ){
+
+            workflow.innerHTML = `
+                ✅ Face Capture
+                <br>
+                ✅ Voice Capture
+                <br>
+                ✅ Upload Complete
+                <br>
+                ⏳ Training Models
+            `;
+        }
+        else{
+
+            workflow.innerHTML = `
+                ✅ Face Capture
+                <br>
+                ✅ Voice Capture
+                <br>
+                ✅ Upload Complete
+                <br>
+                ✅ Training Complete
+            `;
+        }
+        }
     catch(error){
 
         console.error(
@@ -150,61 +266,6 @@ async function loadTrainingStatus(){
     }
 }
 
-// uploadBtn.addEventListener(
-//     "click",
-//     async () => {
-
-//         uploadStatus.innerHTML =
-//             "☁️ Uploading...";
-
-//         try {
-
-//             const formData =
-//                 new FormData();
-
-//             const result =
-//                 await fetch(
-
-//                     `/upload-media/${USER_ID}`,
-
-//                     {
-//                         method:"POST",
-//                         body:formData
-//                     }
-//                 );
-
-//             const data =
-//                 await result.json();
-
-//             if(
-//                 data.status === "success"
-//             ){
-
-//                 uploadCompleted =
-//                     true;
-
-//                 uploadStatus.innerHTML =
-//                     "✅ Uploaded";
-
-//                 checkReady();
-
-//             }
-
-//             else{
-
-//                 uploadStatus.innerHTML =
-//                     "❌ Upload Failed";
-//             }
-
-//         }
-
-//         catch(error){
-
-//             uploadStatus.innerHTML =
-//                 "❌ Upload Failed";
-//         }
-//     }
-// );
 
 
 continueBtn.addEventListener(

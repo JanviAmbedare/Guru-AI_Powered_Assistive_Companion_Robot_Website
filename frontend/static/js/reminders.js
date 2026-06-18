@@ -41,9 +41,6 @@ async function createReminder(){
 
         const payload = {
 
-            user_id:
-                USER_ID,
-
             title:
                 document
                 .getElementById(
@@ -94,6 +91,29 @@ async function createReminder(){
     }
 }
 
+// ==========================
+// RENDER REMINDERS
+// ==========================
+async function renderReminders(reminders) {
+
+    const container =
+        document.getElementById("remindersContainer");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    reminders.forEach(reminder => {
+
+        container.innerHTML += `
+            <div class="reminder-card">
+                <h3>${reminder.title}</h3>
+                <p>${reminder.description}</p>
+                <small>${reminder.reminder_time}</small>
+            </div>
+        `;
+    });
+}
 
 /* ==========================
    LOAD REMINDERS

@@ -424,13 +424,14 @@ def get_robot_status(
 
 
 def send_robot_command(
+    robot_id,
     data,
     token
 ):
 
     return api_request(
         "POST",
-        "/robot/command",
+        f"/robot/command/{robot_id}",
         token=token,
         data=data
     )

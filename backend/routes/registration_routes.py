@@ -12,7 +12,7 @@ from database.biometric_manager import BiometricManager
 from utils.auth import hash_password
 from config.settings import settings
 from services.logging_service import LoggingService
-
+from database.db_utils import execute_query
 router = APIRouter(
     prefix="/register",
     tags=["Registration"]
@@ -26,6 +26,24 @@ BASE_DIR = settings.BASE_STORAGE_PATH
 
 @router.post("/user")
 def register_user(data: UserCreate):
+
+    existing_user = execute_query(
+    """
+    SELECT id
+    FROM users
+    WHERE username=%s
+    """,
+    (data.name,),
+    fetch_one=True
+)
+
+    if existing_user:
+
+        raise HTTPException(
+            status_code=409,
+            detail="Username already exists"
+        )
+
 
     hashed_password = hash_password(data.password)
 

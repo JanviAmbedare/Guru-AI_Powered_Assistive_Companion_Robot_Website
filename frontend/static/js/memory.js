@@ -9,7 +9,10 @@ document.addEventListener(
 
 let emotionChart = null;
 
-
+const USER_ID =
+    window.USER_ID ||
+    localStorage.getItem("user_id");
+    
 /* ==========================
    LOAD ALL DATA
 ========================== */

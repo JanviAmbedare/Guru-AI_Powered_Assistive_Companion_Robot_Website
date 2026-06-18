@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from backend.services.notification_service import NotificationService
+from services.notification_service import NotificationService
 from database.db_utils import execute_query
 from services.whatsapp_service import WhatsAppService
 from services.logging_service import (LoggingService)

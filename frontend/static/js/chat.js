@@ -1,14 +1,6 @@
-const USER_ID =
-    "{{ session.user_id }}";
-
 const chatForm =
     document.getElementById(
         "chatForm"
-    );
-
-const chatContainer =
-    document.getElementById(
-        "chatContainer"
     );
 
 const messageInput =

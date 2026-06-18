@@ -7,7 +7,7 @@ from fastapi import HTTPException
 from typing import List
 
 from services.media_manager import MediaManager
-
+import traceback
 
 router = APIRouter()
 
@@ -41,12 +41,12 @@ async def upload_face(
 
     except Exception as e:
 
-        print(e)
-
+        traceback.print_exc()
+        
         raise HTTPException(
-            status_code=500,
-            detail=str(e)
-        )
+                status_code=500,
+                detail=str(e)
+            )
 
 
 # =========================
@@ -78,7 +78,7 @@ async def upload_voice(
 
     except Exception as e:
 
-        print(e)
+        traceback.print_exc()
 
         raise HTTPException(
             status_code=500,

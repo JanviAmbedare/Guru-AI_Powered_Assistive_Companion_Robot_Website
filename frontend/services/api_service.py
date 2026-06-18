@@ -459,103 +459,55 @@ def send_robot_command(
 # 📸 FACE APIs
 # =====================================================
 
-# def upload_face_samples(
-#     user_id,
-#     files,
-#     media_role,
-#     token
-# ):
-
-#     return api_request(
-
-#         "POST",
-
-#         f"/api/media/register/face/{user_id}",
-
-#         token=token,
-
-#         files=files,
-
-#         data={
-#             "media_role":
-#                 media_role
-#         }
-#     )
-# =====================================================
-# 🎤 VOICE APIs
-# =====================================================
-
-# def upload_voice_samples(
-#     user_id,
-#     files,
-#     media_role,
-#     token
-# ):
-
-#     return api_request(
-
-#         "POST",
-
-#         f"/api/media/register/voice/{user_id}",
-
-#         token=token,
-
-#         files=files,
-
-#         data={
-#             "media_role":
-#                 media_role
-#         }
-#     )
-
-# =====================================================
-# 📁 MEDIA APIs
-# =====================================================
-def upload_all_media(
+def upload_face_samples(
     user_id,
-    face_files,
-    voice_files,
+    files,
+    media_role,
     token
 ):
-
-    files = []
-
-    for file in face_files:
-
-        files.append(
-            (
-                "face_files",
-                (
-                    file.filename,
-                    file.stream,
-                    file.mimetype
-                )
-            )
-        )
-
-    for file in voice_files:
-
-        files.append(
-            (
-                "voice_files",
-                (
-                    file.filename,
-                    file.stream,
-                    file.mimetype
-                )
-            )
-        )
 
     return api_request(
 
         "POST",
 
-        f"/api/media/upload-all/{user_id}",
+        f"/register/face/{user_id}",
 
         token=token,
 
-        files=files
+        files=files,
+
+        data={
+            "media_role":
+                media_role
+        }
     )
+# =====================================================
+# 🎤 VOICE APIs
+# =====================================================
+
+def upload_voice_samples(
+    user_id,
+    files,
+    media_role,
+    token
+):
+
+    return api_request(
+
+        "POST",
+
+        f"/register/voice/{user_id}",
+
+        token=token,
+
+        files=files,
+
+        data={
+            "media_role":
+                media_role
+        }
+    )
+
 
 # =====================================================
 # 🧠 TRAINING STATUS

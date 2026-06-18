@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-
+from database.db_connection import get_connection
 from services.alert_service import (
     AlertService
 )

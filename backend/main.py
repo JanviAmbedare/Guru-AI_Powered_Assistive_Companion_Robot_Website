@@ -123,9 +123,7 @@ app.include_router(
 from routes.media_routes import router as media_router
 
 app.include_router(
-    media_router,
-    prefix="/api/media",
-    tags=["Media"]
+    media_router
 )
 # app.include_router(
 #     memory_router,
@@ -184,6 +182,8 @@ async def global_exception_handler(
 
 @app.on_event("startup")
 async def startup_event():
+
+
     threading.Thread(
     target=ReminderScheduler.start,
     daemon=True

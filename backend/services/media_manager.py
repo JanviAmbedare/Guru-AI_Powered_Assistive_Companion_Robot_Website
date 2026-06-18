@@ -186,15 +186,18 @@ class MediaManager:
     # =====================================
 
     @staticmethod
-    def process_face_files(
-        user_id,
-        files,
-        media_role,
-        upload_source="frontend"
-    ):
+    def process_face_files(user_id,files,media_role,upload_source="frontend"):
 
+        
+        
         uploaded_files = []
-
+        processed = 0
+        # Add face processing job to queue
+        QueueService.add_job(
+                        user_id=user_id,
+                        job_type="face",
+                        total_files=len(files)
+                    )
         for file in files:
 
             # LOCAL SAVE
@@ -264,12 +267,17 @@ class MediaManager:
                 "cloudinary_url":
                     cloud_result["secure_url"]
             })
+            
+            # Update progress in queue
+            processed += 1
 
-            # Add face processing job to queue
-            QueueService.add_job(
+            QueueService.update_progress(
                 user_id=user_id,
-                job_type="face"
+                job_type="face",
+                current_file=file.filename,
+                processed_files=processed
             )
+            
         return uploaded_files
 
 
@@ -286,6 +294,13 @@ class MediaManager:
     ):
 
         uploaded_files = []
+        processed = 0
+
+        QueueService.add_job(
+            user_id=user_id,
+            job_type="voice",
+            total_files=len(files)
+        )
 
         for file in files:
 
@@ -356,12 +371,15 @@ class MediaManager:
                 "cloudinary_url":
                     cloud_result["secure_url"]
             })
+            processed += 1
 
-            # Add voice processing job to queue
-            QueueService.add_job(
+            QueueService.update_progress(
                 user_id=user_id,
-                job_type="voice"
+                job_type="voice",
+                current_file=file.filename,
+                processed_files=processed
             )
+            
 
         return uploaded_files
 
@@ -373,35 +391,121 @@ class MediaManager:
 
         cursor.execute("""
             SELECT
-                media_category,
-                COUNT(*) as total
-            FROM media_files
-            WHERE user_id=%s
-            AND is_active=1
-            GROUP BY media_category
+
+            media_category,
+
+            COUNT(*) as total,
+
+            SUM(
+                CASE
+                    WHEN cloudinary_url IS NOT NULL
+                    THEN 1
+                    ELSE 0
+                END
+            ) as uploaded_count,
+
+            SUM(
+                CASE
+                    WHEN is_processed=1
+                    THEN 1
+                    ELSE 0
+                END
+            ) as processed_count,
+
+            SUM(
+                CASE
+                    WHEN is_used_for_training=1
+                    THEN 1
+                    ELSE 0
+                END
+            ) as trained_count
+
+        FROM media_files
+
+        WHERE user_id=%s
+        AND is_active=1
+
+        GROUP BY media_category
         """, (user_id,))
 
         rows = cursor.fetchall()
 
-        face_count = 0
-        voice_count = 0
+        face_total = 0
+        face_uploaded = 0
+        face_processed = 0
+        face_training = 0
+
+        voice_total = 0
+        voice_uploaded = 0
+        voice_processed = 0
+        voice_training = 0
 
         for row in rows:
 
             category = row["media_category"].lower()
 
-            if category == "face":
-                face_count = row["total"]
+            if category == "faces":
 
-            elif category == "voice":
-                voice_count = row["total"]
+                face_total = row["total"]
+
+                face_uploaded = (
+                    row["uploaded_count"] or 0
+                )
+
+                face_processed = (
+                    row["processed_count"] or 0
+                )
+
+                face_training = (
+                    row["trained_count"] or 0
+                )
+
+            elif category == "voices":
+
+                voice_total = row["total"]
+
+                voice_uploaded = (
+                    row["uploaded_count"] or 0
+                )
+
+                voice_processed = (
+                    row["processed_count"] or 0
+                )
+
+                voice_training = (
+                    row["trained_count"] or 0
+                )
 
         cursor.close()
         conn.close()
 
         return {
-            "face_uploaded": face_count > 0,
-            "voice_uploaded": voice_count > 0,
-            "face_count": face_count,
-            "voice_count": voice_count
-        }
+
+                "face":{
+
+                    "total": face_total,
+
+                    "uploaded":
+                        face_uploaded,
+
+                    "processed":
+                        face_processed,
+
+                    "training":
+                        face_training
+                },
+
+                "voice":{
+
+                    "total": voice_total,
+
+                    "uploaded":
+                        voice_uploaded,
+
+                    "processed":
+                        voice_processed,
+
+                    "training":
+                        voice_training
+                }
+            }

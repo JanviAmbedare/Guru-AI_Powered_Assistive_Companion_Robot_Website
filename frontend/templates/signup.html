@@ -72,7 +72,15 @@ button{
 .active{
     background:#2563eb;
 }
-
+.error-box{
+    display:none;
+    background:#dc2626;
+    color:white;
+    padding:12px;
+    border-radius:12px;
+    margin-bottom:15px;
+    font-weight:600;
+}
 </style>
 </head>
 <body>
@@ -84,14 +92,14 @@ button{
     <p>
         Start your AI companion onboarding
     </p>
-
+    
     <div class="stepper">
         <div class="step active">Account</div>
         <div class="step">Face</div>
         <div class="step">Voice</div>
         <div class="step">Complete</div>
     </div>
-
+    <div id="signupError" class="error-box"></div>
     <form method="POST">
 
         <input type="text" name="name" placeholder="Username" required>

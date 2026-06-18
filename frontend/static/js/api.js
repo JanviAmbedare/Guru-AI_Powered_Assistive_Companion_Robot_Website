@@ -170,7 +170,61 @@ async function signupUser(data) {
         data
     );
 }
+async function handleSignup() {
 
+    const formData = {
+
+        username:
+            document.querySelector(
+                '[name="name"]'
+            ).value,
+
+        password:
+            document.querySelector(
+                '[name="password"]'
+            ).value,
+
+        role:
+            document.querySelector(
+                '[name="role"]'
+            ).value,
+
+        disability_type:
+            document.querySelector(
+                '[name="disability_type"]'
+            ).value,
+
+        language_pref:
+            document.querySelector(
+                '[name="language_pref"]'
+            ).value
+    };
+
+    const result =
+        await signupUser(formData);
+
+    const errorBox =
+        document.getElementById(
+            "signupError"
+        );
+
+    if (
+        result.detail ===
+        "Username already exists"
+    ) {
+
+        errorBox.innerText =
+            "❌ Username already exists";
+
+        errorBox.style.display =
+            "block";
+
+        return;
+    }
+
+    window.location.href =
+        result.redirect_url;
+}
 async function loginUser(data) {
 
     return await apiRequest(

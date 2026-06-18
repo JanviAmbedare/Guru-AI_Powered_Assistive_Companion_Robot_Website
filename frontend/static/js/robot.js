@@ -1,11 +1,10 @@
 const ROBOT_ID = 1;
-
 async function loadRobotStatus(){
 
 
 try{
 
-    const status =
+    const robot =
         await apiRequest(
             "GET",
             `/robot/status/${ROBOT_ID}`
