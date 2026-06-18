@@ -84,18 +84,6 @@ async function uploadMedia() {
         const data =
             await response.json();
 
-        faceUploaded =
-            data.face_uploaded;
-
-        voiceUploaded =
-            data.voice_uploaded;
-
-        faceCount =
-            data.face_count;
-
-        voiceCount =
-            data.voice_count;
-
         if(data.status === "success") {
 
             uploadStatus.innerHTML =
@@ -124,31 +112,69 @@ async function uploadMedia() {
 
 async function loadMediaStatus() {
 
-    const response =
-        await fetch(
-            `${API_BASE_URL}/status/${USER_ID}`
+    try {
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/status/${USER_ID}`
+            );
+
+        console.log(
+            "MEDIA STATUS RESPONSE:",
+            response.status
         );
 
-    const data =
-        await response.json();
-    console.log("Media Status:", data);
+        if(!response.ok){
 
-    document.getElementById(
-    "faceUploadStatus"
+            console.error(
+                "Media Status API Failed"
+            );
+
+            return;
+        }
+
+        const data =
+            await response.json();
+
+        console.log(
+            "Media Status:",
+            data
+        );
+
+        if(!data){
+
+            console.error(
+                "Media status returned null"
+            );
+
+            return;
+        }
+
+        document.getElementById(
+            "faceUploadStatus"
         ).innerText =
-        data.face_uploaded
-            ? `✅ ${data.face_count} Uploaded`
-            : "⌛ Pending";
 
+            data.face_uploaded
+                ? `✅ ${data.face_count} Uploaded`
+                : "⌛ Pending";
 
-    document.getElementById(
+        document.getElementById(
             "voiceUploadStatus"
         ).innerText =
-        data.voice_uploaded
-            ? `✅ ${data.voice_count} Uploaded`
-            : "⌛ Pending";
-    }
 
+            data.voice_uploaded
+                ? `✅ ${data.voice_count} Uploaded`
+                : "⌛ Pending";
+
+    }
+    catch(error){
+
+        console.error(
+            "loadMediaStatus Error:",
+            error
+        );
+    }
+}
 async function loadTrainingStatus(){
 
     try{

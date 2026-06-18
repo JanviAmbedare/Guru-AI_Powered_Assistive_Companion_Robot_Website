@@ -78,7 +78,7 @@ async def upload_voice(
 
     except Exception as e:
 
-        traceback.print_exc()
+        print(e)
 
         raise HTTPException(
             status_code=500,
@@ -91,24 +91,24 @@ def media_status(user_id: int):
     media = MediaManager.get_media_status(
         user_id
     )
-
+    print("MEDIA STATUS =", media)
     return {
 
-    "face_uploaded":
-        media["face"]["uploaded"] > 0,
+        "face_uploaded":
+            media["face"]["uploaded"] > 0,
 
-    "voice_uploaded":
-        media["voice"]["uploaded"] > 0,
+        "voice_uploaded":
+            media["voice"]["uploaded"] > 0,
 
-    "face_count":
-        media["face"]["total"],
+        "face_count":
+            media["face"]["total"],
 
-    "voice_count":
-        media["voice"]["total"],
+        "voice_count":
+            media["voice"]["total"],
 
-    "face":
-        media["face"],
+        "face":
+            media["face"],
 
-    "voice":
-        media["voice"]
-}
+        "voice":
+            media["voice"]
+    }
