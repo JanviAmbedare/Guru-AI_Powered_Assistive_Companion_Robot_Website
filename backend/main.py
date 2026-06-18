@@ -125,8 +125,10 @@ app.include_router(
 from routes.media_routes import router as media_router
 
 app.include_router(
-    media_router
+    media_router,
+    prefix="/media"
 )
+print("MAIN FILE LOADED")
 # app.include_router(
 #     memory_router,
 #     prefix="/api/memory",

@@ -84,6 +84,16 @@ async def upload_voice(
             status_code=500,
             detail=str(e)
         )
+# print("MEDIA ROUTES FILE LOADED")
+# @router.get("/status/{user_id}")
+# def media_status(user_id: int):
+
+#     print("TEST ROUTE HIT")
+
+#     return {
+#         "debug": True,
+#         "user_id": user_id
+#     }
 
 @router.get("/status/{user_id}")
 def media_status(user_id: int):
@@ -92,6 +102,7 @@ def media_status(user_id: int):
         user_id
     )
     print("MEDIA STATUS =", media)
+    
     return {
 
         "face_uploaded":

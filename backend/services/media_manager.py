@@ -432,7 +432,9 @@ class MediaManager:
         voice_uploaded = 0
         voice_processed = 0
         voice_training = 0
+        
         print("ROWS =", rows)
+        
         for row in rows:
 
             category = row["media_category"].lower()

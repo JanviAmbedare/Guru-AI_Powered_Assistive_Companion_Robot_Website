@@ -37,12 +37,12 @@ async function loadProfile(){
 
             apiRequest(
                 "GET",
-                `/status/${USER_ID}`
+                `/api/media/status/${USER_ID}`
             ),
 
             apiRequest(
                 "GET",
-                `/training/status/${USER_ID}`
+                `/api/training/status/${USER_ID}`
             )
         ]);
 

@@ -116,7 +116,7 @@ async function loadMediaStatus() {
 
         const response =
             await fetch(
-                `${API_BASE_URL}/status/${USER_ID}`
+                `${API_BASE_URL}/media/status/${USER_ID}`
             );
 
         console.log(
