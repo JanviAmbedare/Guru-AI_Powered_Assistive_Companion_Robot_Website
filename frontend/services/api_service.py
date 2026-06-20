@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_URL = os.getenv(
-    "BASE_URL",
+API_BASE_URL = os.getenv(
+    "API_BASE_URL",
     "http://127.0.0.1:8000"
 )
 
@@ -31,7 +31,7 @@ def api_request(
     params=None
 ):
 
-    url = f"{BASE_URL}{endpoint}"
+    url = f"{API_BASE_URL}{endpoint}"
 
     headers = {}
 
@@ -337,7 +337,7 @@ def get_media_status(
 
     return api_request(
         "GET",
-        f"/media/status/{user_id}",
+        f"{API_BASE_URL}/media/status/{user_id}",
         token=token
     )
 def send_emergency_alert(
@@ -348,7 +348,7 @@ def send_emergency_alert(
 
     return api_request(
         "POST",
-        "/alerts/emergency",
+        f"{API_BASE_URL}/alerts/emergency",
         token=token,
         params={
             "user_id": user_id,
@@ -365,7 +365,7 @@ def critical_alert(
 
     return api_request(
         "POST",
-        "/alerts/critical",
+        f"{API_BASE_URL}/alerts/critical",
         token=token,
         params={
             "user_id": user_id,
@@ -382,7 +382,7 @@ def info_alert(
 
     return api_request(
         "POST",
-        "/alerts/info",
+        f"{API_BASE_URL}/alerts/info",
         token=token,
         params={
             "user_id": user_id,
@@ -398,7 +398,7 @@ def acknowledge_alert(
 
     return api_request(
         "PUT",
-        f"/alerts/acknowledge/{alert_id}",
+        f"{API_BASE_URL}/alerts/acknowledge/{alert_id}",
         token=token
     )
 
@@ -410,7 +410,7 @@ def resolve_alert(
 
     return api_request(
         "PUT",
-        f"/alerts/resolve/{alert_id}",
+        f"{API_BASE_URL}/alerts/resolve/{alert_id}",
         token=token
     )
 
@@ -422,7 +422,7 @@ def alert_analytics(
 
     return api_request(
         "GET",
-        f"/alerts/analytics/{user_id}",
+        f"{API_BASE_URL}/alerts/analytics/{user_id}",
         token=token
     )
 # =====================================================
@@ -436,7 +436,7 @@ def get_robot_status(
 
     return api_request(
         "GET",
-        f"/robot/status/{robot_id}",
+        f"{API_BASE_URL}/robot/status/{robot_id}",
         token=token
     )
 
@@ -449,7 +449,7 @@ def send_robot_command(
 
     return api_request(
         "POST",
-        f"/robot/command/{robot_id}",
+        f"{API_BASE_URL}/robot/command/{robot_id}",
         token=token,
         data=data
     )
@@ -470,7 +470,7 @@ def upload_face_samples(
 
         "POST",
 
-        f"/media/register/face/{user_id}",
+        f"{API_BASE_URL}/media/register/face/{user_id}",
 
         token=token,
 
@@ -496,7 +496,7 @@ def upload_voice_samples(
 
         "POST",
 
-        f"/media/register/voice/{user_id}",
+        f"{API_BASE_URL}/media/register/voice/{user_id}",
 
         token=token,
 
@@ -514,7 +514,7 @@ def upload_voice_samples(
 def clear_user_media(user_id):
 
     return requests.delete(
-        f"/media/user/{user_id}"
+        f"{API_BASE_URL}/media/user/{user_id}"
     )
 
 # =====================================================
