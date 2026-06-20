@@ -485,10 +485,7 @@ def upload_media(user_id):
                 )
             )
         
-        clear_user_media(
-            user_id
-        )
-        
+               
         
         face_result = {}
 

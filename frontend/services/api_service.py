@@ -12,6 +12,7 @@ load_dotenv()
 
 API_BASE_URL = os.getenv(
     "API_BASE_URL",
+    "https://guru-ai-powered-assistive-companion-kpna.onrender.com",
     "http://127.0.0.1:8000"
 )
 

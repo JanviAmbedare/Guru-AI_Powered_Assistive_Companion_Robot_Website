@@ -2,7 +2,7 @@
 // 🌐 BASE CONFIG
 // =========================
 
-const BASE_URL =
+const API_BASE_URL =
     window.API_BASE_URL ||
     "https://guru-ai-powered-assistive-companion-kpna.onrender.com";
 
@@ -24,7 +24,7 @@ async function apiRequest(
     try {
 
         let url =
-            `${BASE_URL}${endpoint}`;
+            `${API_BASE_URL}${endpoint}`;
 
         // =========================
         // 🔍 QUERY PARAMS
