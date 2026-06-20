@@ -6,7 +6,7 @@ from services.queue_service import QueueService
 from services.cloudinary_service import (
     CloudinaryService
 )
-
+import cloudinary.uploader
 from database.db_connection import (
     get_connection as get_db_connection
 )
