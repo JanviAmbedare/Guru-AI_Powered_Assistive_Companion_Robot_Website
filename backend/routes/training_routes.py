@@ -1,7 +1,6 @@
 from fastapi import APIRouter
-from sqlalchemy import text
 
-from database.db_connection import *
+from database.db_connection import get_connection
 
 from services.queue_service import QueueService
 from services.training_service import TrainingService
@@ -12,7 +11,7 @@ router = APIRouter(
 
 
 @router.get("/training/status/{user_id}")
-def get_training_status(user_id:int):
+def get_training_status(user_id: int):
 
     return TrainingService.get_status(
         user_id
@@ -20,33 +19,32 @@ def get_training_status(user_id:int):
 
 
 @router.post("/training/retrain/{user_id}")
-def retrain_user(user_id:int):
+def retrain_user(user_id: int):
 
-    db = get_connection()
+    conn = get_connection()
+    cursor = conn.cursor()
 
     try:
 
-        face_count = db.execute(
-            text("""
-                SELECT COUNT(*)
-                FROM media_files
-                WHERE user_id=:user_id
-                AND media_category='faces'
-                AND is_active=1
-            """),
-            {"user_id": user_id}
-        ).scalar()
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM media_files
+            WHERE user_id=%s
+            AND media_category='faces'
+            AND is_active=1
+        """, (user_id,))
 
-        voice_count = db.execute(
-            text("""
-                SELECT COUNT(*)
-                FROM media_files
-                WHERE user_id=:user_id
-                AND media_category='voices'
-                AND is_active=1
-            """),
-            {"user_id": user_id}
-        ).scalar()
+        face_count = cursor.fetchone()[0]
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM media_files
+            WHERE user_id=%s
+            AND media_category='voices'
+            AND is_active=1
+        """, (user_id,))
+
+        voice_count = cursor.fetchone()[0]
 
         QueueService.force_retrain(
             user_id,
@@ -61,9 +59,13 @@ def retrain_user(user_id:int):
         )
 
         return {
-            "status":"success",
-            "message":"Retraining queued"
+            "status": "success",
+            "message": "Retraining queued",
+            "face_files": face_count,
+            "voice_files": voice_count
         }
 
     finally:
-        db.close()
+
+        cursor.close()
+        conn.close()
