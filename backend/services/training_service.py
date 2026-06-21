@@ -7,134 +7,52 @@ class TrainingService:
     def get_status(user_id: int):
 
         conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
 
-        cursor = conn.cursor(
-            dictionary=True
-        )
+        result = {}
 
-        cursor.execute("""
-            SELECT *
-            FROM model_training_queue
-            WHERE user_id=%s
-            ORDER BY created_at DESC
-        """, (user_id,))
+        for job_type in ["face", "voice"]:
 
-        rows = cursor.fetchall()
+            cursor.execute("""
+                SELECT *
+                FROM model_training_queue
+                WHERE user_id=%s
+                AND type=%s
+                ORDER BY id DESC
+                LIMIT 1
+            """,
+            (
+                user_id,
+                job_type
+            ))
 
-        face_status = "pending"
-        voice_status = "pending"
+            row = cursor.fetchone()
 
-        face_progress = 0
-        voice_progress = 0
+            if not row:
 
-        face_current_file = None
-        voice_current_file = None
+                result[f"{job_type}_status"] = "pending"
+                result[f"{job_type}_progress"] = 0
+                result[f"{job_type}_current_file"] = None
+                result[f"{job_type}_total_files"] = 0
+                result[f"{job_type}_processed_files"] = 0
 
-        face_total_files = 0
-        voice_total_files = 0
+            else:
 
-        face_processed_files = 0
-        voice_processed_files = 0
-
-        for row in rows:
-
-            if row["type"] == "face":
-
-                face_status = row["status"]
-
-                # face_started = row["started_at"]
-                # face_completed = row["completed_at"]
-
-                face_progress = (
-                    row.get(
-                        "progress_percentage",
-                        0
-                    ) or 0
+                result[f"{job_type}_status"] = row["status"]
+                result[f"{job_type}_progress"] = (
+                    row["progress_percentage"] or 0
                 )
-
-                face_current_file = (
-                    row.get(
-                        "current_file"
-                    )
+                result[f"{job_type}_current_file"] = (
+                    row["current_file"]
                 )
-
-                face_total_files = (
-                    row.get(
-                        "total_files",
-                        0
-                    ) or 0
+                result[f"{job_type}_total_files"] = (
+                    row["total_files"] or 0
                 )
-
-                face_processed_files = (
-                    row.get(
-                        "processed_files",
-                        0
-                    ) or 0
-                )
-
-            elif row["type"] == "voice":
-
-                voice_status = row["status"]
-
-                # voice_started = row["started_at"]
-                # voice_completed = row["completed_at"]
-
-                voice_progress = (
-                    row.get(
-                        "progress_percentage",
-                        0
-                    ) or 0
-                )
-
-                voice_current_file = (
-                    row.get(
-                        "current_file"
-                    )
-                )
-
-                voice_total_files = (
-                    row.get(
-                        "total_files",
-                        0
-                    ) or 0
-                )
-
-                voice_processed_files = (
-                    row.get(
-                        "processed_files",
-                        0
-                    ) or 0
+                result[f"{job_type}_processed_files"] = (
+                    row["processed_files"] or 0
                 )
 
         cursor.close()
         conn.close()
 
-        return {
-
-            "face_status": face_status,
-            "voice_status": voice_status,
-
-            "face_progress":
-                face_progress,
-
-            "voice_progress":
-                voice_progress,
-
-            "face_current_file":
-                face_current_file,
-
-            "voice_current_file":
-                voice_current_file,
-
-            "face_total_files":
-                face_total_files,
-
-            "voice_total_files":
-                voice_total_files,
-
-            "face_processed_files":
-                face_processed_files,
-
-            "voice_processed_files":
-                voice_processed_files
-        }
+        return result

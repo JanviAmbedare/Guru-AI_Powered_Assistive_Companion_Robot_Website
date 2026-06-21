@@ -83,7 +83,7 @@ async function retrainModels(){
 
         await apiRequest(
             "POST",
-            `/profile/${USER_ID}/retrain`
+            `/training/retrain/${USER_ID}`
         );
 
         alert(

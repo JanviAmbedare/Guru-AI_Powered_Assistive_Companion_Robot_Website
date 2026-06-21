@@ -18,6 +18,14 @@ uploadBtn.addEventListener(
     uploadMedia
 );
 
+async function startFreshRegistration(){
+
+    await clearMedia();
+
+    window.location.href =
+        `/capture-face/${USER_ID}`;
+}
+
 async function uploadMedia() {
     console.log("UPLOAD FUNCTION STARTED");
     const faces =
@@ -104,8 +112,6 @@ async function uploadMedia() {
                 "Upload Complete";
 
             uploadBtn.disabled = true;
-
-            await clearMedia();
 
             await loadMediaStatus();
 

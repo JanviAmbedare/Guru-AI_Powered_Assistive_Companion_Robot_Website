@@ -544,7 +544,17 @@ class MediaManager:
             DELETE FROM media_files
             WHERE user_id=%s
         """, (user_id,))
+        # delete from model_training_queue and biometric_profiles tables for the user
+        cursor.execute("""
+            DELETE FROM model_training_queue
+            WHERE user_id=%s
+        """, (user_id,))
 
+        # 
+        cursor.execute("""
+            DELETE FROM biometric_profiles
+            WHERE user_id=%s
+        """, (user_id,))
         conn.commit()
 
         cursor.close()

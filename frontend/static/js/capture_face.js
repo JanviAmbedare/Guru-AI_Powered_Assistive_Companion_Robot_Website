@@ -105,9 +105,9 @@ function captureFrame(){
 // =========================
 
 async function startCapture(){
-
+    
     if(capturing) return;
-
+    
     if(!stream){
         await startCamera();
     }
@@ -266,4 +266,6 @@ function updateUI(){
 // 🚀 INIT
 // =========================
 
-startCamera();
+document.addEventListener("DOMContentLoaded", async () => {
+    startCamera();
+});

@@ -157,21 +157,34 @@ async function clearMedia() {
 
     const db = await openDB();
 
-    db.transaction(
+    await db.transaction(
         FACE_STORE,
         "readwrite"
-    )
-    .objectStore(
-        FACE_STORE
-    )
-    .clear();
+    ).objectStore(FACE_STORE).clear();
 
-    db.transaction(
+    await db.transaction(
         VOICE_STORE,
         "readwrite"
-    )
-    .objectStore(
-        VOICE_STORE
-    )
-    .clear();
-}
+    ).objectStore(VOICE_STORE).clear();
+
+    try {
+
+            const response = await fetch(
+                `${API_BASE_URL}/media/user/${USER_ID}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+            const result = await response.json();
+
+            console.log("Media cleared:", result);
+
+        }
+        catch(error){
+
+            console.error(error);
+
+        }
+    }
+

@@ -121,15 +121,21 @@ class QueueService:
             """
             UPDATE model_training_queue
             SET
-
                 processed_files=%s,
-
                 current_file=%s,
-
                 progress_percentage=%s
-
-            WHERE user_id=%s
-            AND type=%s
+            WHERE id=
+            (
+                SELECT id FROM
+                (
+                    SELECT id
+                    FROM model_training_queue
+                    WHERE user_id=%s
+                    AND type=%s
+                    ORDER BY id DESC
+                    LIMIT 1
+                ) t
+            )
             """,
             (
                 processed_files,
@@ -199,7 +205,16 @@ class QueueService:
                 job_type
             )
         )
-
+        cursor.execute("""
+            DELETE FROM model_training_queue
+            WHERE user_id=%s
+            AND type=%s
+        """,
+        (
+            user_id,
+            job_type
+        ))
+        
         cursor.execute(
             """
             INSERT INTO model_training_queue
