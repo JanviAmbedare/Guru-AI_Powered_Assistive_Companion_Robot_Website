@@ -33,6 +33,18 @@ class AIClient:
         response.raise_for_status()
 
         return response.json()
+
+    @staticmethod
+    def retrain(user_id):
+
+        response = requests.post(
+            f"{AI_SERVICE_URL}/training/retrain/{user_id}",
+            timeout=30
+        )
+
+        response.raise_for_status()
+
+        return response.json()
     # @staticmethod
     # def verify_face(file):
 
@@ -52,28 +64,6 @@ class AIClient:
     #         f"{AI_SERVICE_URL}{AIClient.API_PREFIX}/voice/verify",
     #         files={"file": file},
     #         timeout=60
-    #     )
-
-    #     response.raise_for_status()
-    #     return response.json()
-
-    # @staticmethod
-    # def train_face(user_id):
-
-    #     response = requests.post(
-    #         f"{AI_SERVICE_URL}{AIClient.API_PREFIX}/training/face/{user_id}",
-    #         timeout=300
-    #     )
-
-    #     response.raise_for_status()
-    #     return response.json()
-
-    # @staticmethod
-    # def train_voice(user_id):
-
-    #     response = requests.post(
-    #         f"{AI_SERVICE_URL}{AIClient.API_PREFIX}/training/voice/{user_id}",
-    #         timeout=300
     #     )
 
     #     response.raise_for_status()

@@ -48,17 +48,13 @@ def update_profile(
 
 
 @router.post("/profile/{user_id}/retrain")
-def retrain_models(user_id: int):
+def retrain_models(user_id:int):
 
-    face_result = AIClient.train_face(user_id)
+    result = AIClient.retrain(
+        user_id
+    )
 
-    voice_result = AIClient.train_voice(user_id)
-
-    return {
-        "status": "success",
-        "face": face_result,
-        "voice": voice_result
-    }
+    return result
 
 @router.delete("/profile/{user_id}")
 def delete_profile(user_id: int):

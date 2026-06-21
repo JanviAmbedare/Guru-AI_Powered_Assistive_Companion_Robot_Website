@@ -171,3 +171,68 @@ class QueueService:
 
         cursor.close()
         conn.close()
+    @staticmethod
+    def force_retrain(
+        user_id,
+        job_type,
+        total_files
+    ):
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            UPDATE model_training_queue
+            SET status='cancelled'
+            WHERE user_id=%s
+            AND type=%s
+            AND status IN
+            (
+                'pending',
+                'uploading',
+                'processing',
+                'training'
+            )
+            """,
+            (
+                user_id,
+                job_type
+            )
+        )
+
+        cursor.execute(
+            """
+            INSERT INTO model_training_queue
+            (
+                user_id,
+                type,
+                status,
+                total_files,
+                processed_files,
+                progress_percentage
+            )
+            VALUES
+            (
+                %s,
+                %s,
+                'pending',
+                %s,
+                0,
+                0
+            )
+            """,
+            (
+                user_id,
+                job_type,
+                total_files
+            )
+        )
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return {
+            "status": "queued"
+        }
