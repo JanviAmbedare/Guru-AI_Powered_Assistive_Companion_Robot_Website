@@ -21,7 +21,84 @@ async function loadAlerts() {
         return [];
     }
 }
+async function renderAlerts() {
 
+    const alerts = await loadAlerts();
+
+    const container =
+        document.getElementById(
+            "alertsContainer"
+        );
+
+    container.innerHTML = "";
+
+    alerts.forEach(alert => {
+
+        container.innerHTML += `
+
+        <div class="alert-card ${alert.severity.toLowerCase()}">
+
+            <div class="header">
+
+                <h3>${alert.title}</h3>
+
+                <span>${alert.severity}</span>
+
+            </div>
+
+            <p>${alert.message}</p>
+
+            <div class="meta">
+
+                <span>${alert.type}</span>
+
+                <span>${alert.source}</span>
+
+            </div>
+
+            <div class="meta">
+
+                <span>${alert.created_at}</span>
+
+                <span>${alert.status}</span>
+
+            </div>
+
+            ${
+                alert.status === "ACTIVE"
+                ?
+
+                `
+                <button
+                    class="ack-btn"
+                    onclick="acknowledge(${alert.id})">
+
+                    ✅ Acknowledge
+
+                </button>
+
+                <button
+                    class="resolve-btn"
+                    onclick="resolve(${alert.id})">
+
+                    ✔ Resolve
+
+                </button>
+                `
+
+                :
+
+                `<span class="resolved">✔ ${alert.status}</span>`
+
+            }
+
+        </div>
+
+        `;
+
+    });
+
+}
 
 /* =====================================
    EMERGENCY ALERT
@@ -35,21 +112,24 @@ async function sendEmergencyAlert(
 
         const response =
             await apiRequest(
-                "POST",
-                "/trigger-emergency",
-                token,
-                null,
-                {
-                    user_id: USER_ID,
-                    message: message
-                }
-            );
+            "POST",
+            "/alerts/emergency",
+            null,
+            null,
+            {
+                user_id: USER_ID,
+                message: message
+            }
+        );
 
         showAlertToast(
             "🚨 Emergency alert sent"
         );
 
+        renderAlerts();
+
         return response;
+
 
     } catch (error) {
 
@@ -116,7 +196,17 @@ async function acknowledgeAlert(
     );
 }
 
+async function acknowledge(id){
 
+    await acknowledgeAlert(id);
+
+    showAlertToast(
+        "Alert Acknowledged"
+    );
+
+    renderAlerts();
+
+}
 /* =====================================
    RESOLVE ALERT
 ===================================== */
@@ -130,7 +220,17 @@ async function resolveAlert(
         `/alerts/resolve/${alertId}`
     );
 }
+async function resolve(id){
 
+    await resolveAlert(id);
+
+    showAlertToast(
+        "Alert Resolved"
+    );
+
+    renderAlerts();
+
+}
 
 /* =====================================
    ALERT ANALYTICS
@@ -195,3 +295,26 @@ function showAlertToast(
 
     }, 3000);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const btn = document.getElementById("emergencyBtn");
+
+    if (btn) {
+
+        btn.addEventListener("click", async () => {
+
+            await sendEmergencyAlert();
+
+            await renderAlerts();
+
+        });
+
+    }
+
+});
+
+// setInterval(
+//     renderAlerts,
+//     5000
+// );

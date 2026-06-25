@@ -41,29 +41,18 @@ async function createReminder(){
 
         const payload = {
 
+            user_id: USER_ID,
+
             title:
-                document
-                .getElementById(
-                    "title"
-                )
-                .value,
+                document.getElementById("title").value,
 
             message:
-                document
-                .getElementById(
-                    "message"
-                )
-                .value,
+                document.getElementById("message").value,
 
-            remind_at:
-                remindAt,
+            remind_at: remindAt,
 
             priority:
-                document
-                .getElementById(
-                    "priority"
-                )
-                .value
+                document.getElementById("priority").value
         };
 
         await apiRequest(
@@ -108,8 +97,8 @@ async function renderReminders(reminders) {
         container.innerHTML += `
             <div class="reminder-card">
                 <h3>${reminder.title}</h3>
-                <p>${reminder.description}</p>
-                <small>${reminder.reminder_time}</small>
+                <p>${reminder.message}</p>
+                <small>${reminder.remind_at}</small>
             </div>
         `;
     });
@@ -212,13 +201,14 @@ async function snoozeReminder(
 
         await apiRequest(
             "PUT",
-            `/reminder/snooze/${USER_ID}/${reminderId}`
+            `/reminder/snooze/${USER_ID}/${reminderId}`,
+            null,
+            null,
+            {
+                snooze_time:"10 minutes"
+            }
         );
-
-        loadReminders();
-
     }
-
     catch(error){
 
         console.error(

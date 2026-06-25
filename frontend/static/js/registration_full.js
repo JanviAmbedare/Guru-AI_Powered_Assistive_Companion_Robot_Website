@@ -327,6 +327,9 @@ async function loadTrainingStatus(){
                 <br>
                 ✅ Training Complete
             `;
+            continueBtn.disabled = false;
+            continueBtn.style.opacity = "1";
+            continueBtn.style.cursor = "pointer";
         }
         }
     catch(error){
@@ -344,8 +347,7 @@ continueBtn.addEventListener(
     "click",
     () => {
 
-        window.location.href =
-            "/";
+        window.location.href="/dashboard";
     }
 );
 

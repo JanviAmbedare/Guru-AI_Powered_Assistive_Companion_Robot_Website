@@ -150,7 +150,10 @@ class AlertService:
         try:
 
             RobotService.speak(
-                "Emergency detected."
+                "Emergency detected. "
+                "Sending emergency notification. "
+                "Please stay calm. "
+                "Help has been informed."
             )
 
         except Exception as e:

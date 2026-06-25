@@ -20,7 +20,7 @@ href="/static/css/alerts.css">
             🚨 Alert Dashboard
         </h1>
 
-        <button id="openEmergencyBtn">
+        <button id="emergencyBtn">
             Trigger Emergency
         </button>
 
@@ -50,51 +50,12 @@ href="/static/css/alerts.css">
         </div>
 
     </div>
-
-    <div class="alerts-grid">
-
-        {% for a in alerts %}
-
-        <div class="alert-card {{ a.severity }}">
-
-            <div class="header">
-
-                <h3>{{ a.title }}</h3>
-
-                <span>
-                    {{ a.severity }}
-                </span>
-
-            </div>
-
-            <p>{{ a.message }}</p>
-
-            <div class="meta">
-
-                <span>{{ a.type }}</span>
-
-                <span>{{ a.created_at }}</span>
-
-            </div>
-
-            {% if a.status == "ACTIVE" %}
-
-            <button
-                class="ack-btn"
-                data-alert-id="{{ a.id }}">
-
-                ✅ Acknowledge
-
-            </button>
-
-            {% endif %}
-
-        </div>
-
-        {% endfor %}
+    <div
+        id="alertsContainer"
+        class="alerts-grid">
 
     </div>
-
+    
 </div>
 
 
@@ -143,7 +104,7 @@ href="/static/css/alerts.css">
 
 </div>
 
-
+<script src="/static/js/alerts.js"></script>
 <script>
 
 const USER_ID = {{ user_id }};
@@ -165,11 +126,12 @@ if(emergencyBtn){
     );
 }
 </script>
+
 <script src="{{ url_for('static', filename='js/config.js') }}"></script>
 <script src="{{ url_for('static', filename='js/api.js') }}"></script>
 <script src="/static/js/notifications.js"></script>
 
-<script src="/static/js/alerts.js"></script>
+
 
 </body>
 </html>

@@ -86,12 +86,12 @@ function updateCounters(
     document.getElementById(
         "batteryLevel"
     ).innerText =
-        `${robot.battery_level || 0}%`;
+        `${robot?.battery_level ?? "Offline"}`;
 
     document.getElementById(
         "cpuTemp"
     ).innerText =
-        `${robot.temperature || 0}°C`;
+        `${robot?.temperature ?? "--"}°C`;
 
     document.getElementById(
         "topEmotion"
